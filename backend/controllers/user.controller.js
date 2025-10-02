@@ -1,0 +1,43 @@
+// external inputs
+const { validationResult } = require("express-validator");
+
+// internal inputs
+const userModel = require("../models/user.model");
+const userService = require("../services/user.service");
+
+module.exports.registerUser = async (req, res) => {
+	const errors = validationResult(req);
+	console.log(errors.array());
+
+	if (!errors.isEmpty()) {
+		return res.status(400).json({ error: errors.array() });
+	}
+
+	const { fullName, email, password } = req.body;
+
+	const hashedPassword = await userModel.hashPassword(password);
+
+	if (!fullName.firstName || !email || !password) {
+		throw new Error("Fill all the required fields");
+	}
+
+	try {
+		const user = await userService.createUser({
+			firstName: fullName.firstName,
+			lastName: fullName.lastName,
+			email,
+			password: hashedPassword,
+		});
+
+		const userObj = user.toObject();
+		delete userObj.password;
+
+		const token = await user.generateAuthToken();
+
+		res.status(201).json({ user: userObj, token });
+	} catch (err) {
+		if (err.code === 11000 && err.keyPattern.email) {
+			res.status(409).json("user already exist!");
+		}
+	}
+};
