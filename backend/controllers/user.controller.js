@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const userModel = require("../models/user.model");
 const userService = require("../services/user.service");
 
+// user registration
 module.exports.registerUser = async (req, res) => {
 	const errors = validationResult(req);
 	console.log(errors.array());
@@ -40,4 +41,33 @@ module.exports.registerUser = async (req, res) => {
 			res.status(409).json("user already exist!");
 		}
 	}
+};
+
+// user login
+module.exports.loginUser = async (req, res) => {
+	const { email, password } = req.body;
+
+	if (!email || !password) {
+		throw new Error("fill all the required fields");
+	}
+
+	const user = await userModel.findOne({ email }).select("+password");
+
+	if (!user) {
+		res.status(401).json("invalid credential!");
+		return;
+	}
+
+	const isPasswordCorrect = await user.comparePassword(password);
+
+	if (!isPasswordCorrect) {
+		res.status(401).json("invalid credential!");
+		return;
+	}
+
+	const token = user.generateAuthToken();
+	const userObj = user.toObject();
+	delete userObj.password;
+
+	res.status(200).json({ user: userObj, token });
 };
