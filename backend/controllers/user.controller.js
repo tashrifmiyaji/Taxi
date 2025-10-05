@@ -34,6 +34,7 @@ module.exports.registerUser = async (req, res) => {
 		delete userObj.password;
 
 		const token = await user.generateAuthToken();
+		res.cookie("token", token);
 
 		res.status(201).json({ user: userObj, token });
 	} catch (err) {
@@ -54,20 +55,26 @@ module.exports.loginUser = async (req, res) => {
 	const user = await userModel.findOne({ email }).select("+password");
 
 	if (!user) {
-		res.status(401).json("invalid credential!");
+		res.status(401).json({ message: "invalid credential!" });
 		return;
 	}
 
 	const isPasswordCorrect = await user.comparePassword(password);
 
 	if (!isPasswordCorrect) {
-		res.status(401).json("invalid credential!");
+		res.status(401).json({ message: "invalid credential!" });
 		return;
 	}
 
 	const token = user.generateAuthToken();
+
+	res.cookie("token", token);
 	const userObj = user.toObject();
 	delete userObj.password;
 
 	res.status(200).json({ user: userObj, token });
+};
+
+module.exports.userProfile = async (req, res) => {
+	res.status(200).json(req.user);
 };

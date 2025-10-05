@@ -4,7 +4,7 @@ const { body } = require("express-validator");
 
 // internal inputs
 const userController = require("../controllers/user.controller");
-const userModel = require("../models/user.model");
+const authMiddleware = require("../middlewares/auth.middleware");
 
 //
 const routes = express.Router();
@@ -30,5 +30,8 @@ routes.post(
 	[body("email").isEmail().withMessage("invalid email!")],
 	userController.loginUser
 );
+
+// user profile
+routes.get("/profile", authMiddleware.authUser, userController.userProfile);
 
 module.exports = routes;
