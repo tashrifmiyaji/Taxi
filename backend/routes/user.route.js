@@ -34,4 +34,7 @@ routes.post(
 // user profile
 routes.get("/profile", authMiddleware.authUser, userController.userProfile);
 
+// user Logout
+routes.get("/logout", authMiddleware.authUser, userController.logoutUser);
+
 module.exports = routes;
