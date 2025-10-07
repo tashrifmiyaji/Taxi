@@ -101,3 +101,74 @@
   ```json
   { "message": "unauthorized!" }
   ```
+
+## Captain API Endpoints
+
+### 1. Register Captain
+
+- **Endpoint:** `POST /captain/register`
+- **Body:**
+  ```json
+  {
+    "fullName": {
+        "firstName": "John",
+        "lastName": "Doe"
+    },
+    "email": "captain@example.com",
+    "password": "yourpassword",
+    "vehicle": {
+        "color": "black",
+        "vehicleNumber": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+    }
+  }
+  ```
+- **Success Response:**
+  ```json
+  {
+    "captain": {
+      "_id": "...",
+      "fullName": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "email": "captain@example.com",
+      "status": "inactive",
+      "vehicle": {
+        "color": "black",
+        "vehicleNumber": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    },
+    "token": "JWT_TOKEN"
+  }
+  ```
+- **Error Responses:**
+  ```json
+  { "error": [ { "msg": "Invalid Email" } ] }
+  ```
+  ```json
+  { "error": [ { "msg": "First name must be at least 3 character long!" } ] }
+  ```
+  ```json
+  { "error": [ { "msg": "password must be at least 6 character long!" } ] }
+  ```
+  ```json
+  { "error": [ { "msg": "vehicle Number must be at least 4 character long!" } ] }
+  ```
+  ```json
+  { "error": [ { "msg": "Vehicle type must be car or bike!" } ] }
+  ```
+  ```json
+  { "message": "captain already exist!" }
+  ```
+
+### Vehicle Types
+- car
+- bike
+
+### Captain Status
+- active
+- inactive
