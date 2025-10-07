@@ -172,3 +172,46 @@
 ### Captain Status
 - active
 - inactive
+- 
+- ### 2. Login Captain
+
+- **Endpoint:** `POST /captain/login`
+- **Body:**
+  ```json
+  {
+    "email": "captain@example.com",
+    "password": "yourpassword"
+  }
+  ```
+- **Success Response:**
+  ```json
+  {
+    "captain": {
+      "_id": "...",
+      "fullName": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "email": "captain@example.com",
+      "status": "inactive",
+      "vehicle": {
+        "color": "black",
+        "vehicleNumber": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    },
+    "token": "JWT_TOKEN"
+  }
+  ```
+- **Error Responses:**
+  ```json
+  { "error": [ { "msg": "invalid email!" } ] }
+  ```
+  ```json
+  { "message": "invalid credential!" }
+  ```
+  ```json
+  { "message": "fill all the required fields!" }
+  ```
+  

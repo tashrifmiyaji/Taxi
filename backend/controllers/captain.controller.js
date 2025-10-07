@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const captainModel = require("../models/captain.model");
 const captainService = require("../services/captain.service");
 
+// register
 module.exports.registerCaptain = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty) {
@@ -52,4 +53,41 @@ module.exports.registerCaptain = async (req, res) => {
 	res.cookie("captain-token", token);
 
 	res.status(201).json({ captain: captainObj, token });
+};
+
+// login
+module.exports.loginCaptain = async (req, res) => {
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty) {
+		return res.status(400).json({ error: errors.array() });
+	}
+
+	const { email, password } = req.body;
+
+	if (!email && !password) {
+		return res
+			.status(400)
+			.json({ message: "fill all the required fields!" });
+	}
+
+	const captain = await captainModel.findOne({ email }).select("+password");
+
+	if (!captain) {
+		return res.status(401).json({ message: "invalid credential!" });
+	}
+
+	const isCorrectPassword = await captain.comparePassword(password);
+
+	if (!isCorrectPassword) {
+		return res.status(401).json({ message: "invalid credential!" });
+	}
+
+	const captainObj = captain.toObject();
+	delete captainObj.password;
+
+	const token = await captain.generateCaptainToken();
+	res.cookie("captain-token", token);
+
+	res.status(200).json({ captain: captainObj, token });
 };

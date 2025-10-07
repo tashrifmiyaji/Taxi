@@ -8,6 +8,7 @@ const captainController = require("../controllers/captain.controller");
 //
 const routes = express.Router();
 
+// register route
 routes.post(
 	"/register",
 	[
@@ -29,6 +30,13 @@ routes.post(
 			.withMessage("Vehicle type must be car or bike!"),
 	],
 	captainController.registerCaptain
+);
+
+// login route
+routes.post(
+	"/login",
+	[body("email").isEmail().withMessage("invalid email!")],
+	captainController.loginCaptain
 );
 
 module.exports = routes;

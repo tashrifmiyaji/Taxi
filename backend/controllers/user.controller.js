@@ -49,7 +49,7 @@ module.exports.registerUser = async (req, res) => {
 module.exports.loginUser = async (req, res) => {
 	const { email, password } = req.body;
 
-	if (!email || !password) {
+	if (!email && !password) {
 		throw new Error("fill all the required fields");
 	}
 
