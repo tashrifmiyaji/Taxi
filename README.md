@@ -244,3 +244,19 @@
   ```json
   { "message": "unauthorized!" }
   ```
+
+### 4. Captain Logout
+
+- **Endpoint:** `GET /captain/logout`
+- **Headers:**
+  ```
+  Authorization: Bearer JWT_TOKEN
+  ```
+- **Success Response:**
+  ```json
+  { "message": "captain logout successfully." }
+  ```
+- **Error Response:**
+  ```json
+  { "message": "unauthorized!" }
+  ```

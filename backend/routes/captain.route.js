@@ -47,4 +47,11 @@ routes.get(
 	captainController.captainProfile
 );
 
+// captain logout
+routes.get(
+	"/logout",
+	authMiddleware.authCaptain,
+	captainController.captainLogout
+);
+
 module.exports = routes;

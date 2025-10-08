@@ -32,7 +32,7 @@ module.exports.authUser = async (req, res, next) => {
 module.exports.authCaptain = async (req, res, next) => {
 	const token =
 		req.cookies?.["captain-token"] ||
-		req.headers?.authorization?.split(" ")[1];
+		req.headers.authorization?.split(" ")[1];
 
 	if (!token) {
 		return res.status(401).json({ message: "unauthorized!" });
@@ -48,6 +48,7 @@ module.exports.authCaptain = async (req, res, next) => {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 		const captain = await captainModel.findById(decoded._id);
 		req.captain = captain;
+		req.token = token;
 		next();
 	} catch (err) {
 		res.status(401).json({ message: "unauthorized!" });
