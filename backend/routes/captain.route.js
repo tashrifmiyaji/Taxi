@@ -4,11 +4,12 @@ const { body } = require("express-validator");
 
 // internal inputs
 const captainController = require("../controllers/captain.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
 
 //
 const routes = express.Router();
 
-// register route
+// captain register route
 routes.post(
 	"/register",
 	[
@@ -32,11 +33,18 @@ routes.post(
 	captainController.registerCaptain
 );
 
-// login route
+// captain login route
 routes.post(
 	"/login",
 	[body("email").isEmail().withMessage("invalid email!")],
 	captainController.loginCaptain
+);
+
+// captain profile route
+routes.get(
+	"/profile",
+	authMiddleware.authCaptain,
+	captainController.captainProfile
 );
 
 module.exports = routes;

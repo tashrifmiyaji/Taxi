@@ -91,3 +91,8 @@ module.exports.loginCaptain = async (req, res) => {
 
 	res.status(200).json({ captain: captainObj, token });
 };
+
+// profile
+module.exports.captainProfile = (req, res) => {
+	res.status(200).json(req.captain)
+}

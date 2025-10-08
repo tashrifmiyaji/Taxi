@@ -214,4 +214,33 @@
   ```json
   { "message": "fill all the required fields!" }
   ```
-  
+
+### 3. Get Captain Profile
+
+- **Endpoint:** `GET /captain/profile`
+- **Headers:**
+  ```
+  Authorization: Bearer JWT_TOKEN
+  ```
+- **Success Response:**
+  ```json
+  {
+    "_id": "...",
+    "fullName": {
+      "firstName": "John",
+      "lastName": "Doe"
+    },
+    "email": "captain@example.com",
+    "status": "inactive",
+    "vehicle": {
+      "color": "black",
+      "vehicleNumber": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+  ```
+- **Error Response:**
+  ```json
+  { "message": "unauthorized!" }
+  ```
