@@ -1,16 +1,27 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router";
+import { userLogin } from "../../apis/api";
+import { UserDataContext } from "../../context/userContext";
 
 const UserLogin = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const submitHandler = (e) => {
-		e.preventDefault();
-		setEmail("");
-		setPassword("");
-	};
+	const { user, setUser } = useContext(UserDataContext);
+	const navigate = useNavigate();
 
+	const submitHandler = async (e) => {
+		e.preventDefault();
+
+		const res = await userLogin({ email, password });
+		if (res.status === 200) {
+			setUser(res.data);
+			localStorage.setItem("token",res.data.token);
+			localStorage.setItem("role","user");
+
+			navigate("/home");
+		}
+	};
 	return (
 		<div>
 			<div className="h-screen w-full flex justify-between flex-col">

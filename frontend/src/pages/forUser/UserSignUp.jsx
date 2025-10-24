@@ -1,19 +1,35 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../../context/userContext";
+import { userRegister } from "../../apis/api";
 
 const UserSignup = () => {
-	const [name, setName] = useState({
-		firstName: "",
-		lastName: "",
-	});
+	const [name, setName] = useState({});
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		console.log(name.firstName, name.lastName);
-	};
+	const navigate = useNavigate();
+	const { user, setUser } = useContext(UserDataContext);
 
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		const newUser = {
+			fullName: {
+				firstName: name.firstName,
+				lastName: name.lastName,
+			},
+			email,
+			password,
+		};
+
+		const res = await userRegister(newUser)
+		if (res.status === 201) {
+			localStorage.setItem("token",res.data.token);
+			localStorage.setItem("role","user");
+			setUser(res.data)
+			navigate("/home")
+		}
+	};
 	return (
 		<div>
 			<div className="h-screen w-full flex justify-between flex-col">
@@ -95,7 +111,9 @@ const UserSignup = () => {
 					<div>
 						<p className="text-[10px] leading-tight">
 							This site is protected by reCAPTCHA and the{" "}
-							<span className="underline">Google Privacy Policy</span>{" "}
+							<span className="underline">
+								Google Privacy Policy
+							</span>{" "}
 							and{" "}
 							<span className="underline">
 								Terms of Service apply

@@ -17,7 +17,12 @@ const CaptainSignup = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(name, email, password, vehicleInformation);
+		const newCaptain = {
+			name,
+			email,
+			password,
+			vehicleInformation
+		}
 	};
 
 	return (

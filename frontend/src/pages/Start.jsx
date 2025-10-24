@@ -1,7 +1,7 @@
 import React from "react";
 import {Link}  from "react-router"
 
-const Home = () => {
+const Start = () => {
 	return (
     <div>
       <div className=" home-page-bg-img h-screen w-full bg-red-400 flex justify-between flex-col">
@@ -14,4 +14,4 @@ const Home = () => {
     </div>
   )
 };
-export default Home;
+export default Start;
