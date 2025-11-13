@@ -16,13 +16,13 @@ module.exports.registerCaptain = async (req, res) => {
 	const { fullName, email, password, vehicle } = req.body;
 
 	if (
-		fullName.firstName &&
-		email &&
-		password &&
-		vehicle.color &&
-		vehicle.vehicleNumber &&
-		vehicle.capacity &&
-		vehicle.vehicleTyp
+		!fullName.firstName &&
+		!email &&
+		!password &&
+		!vehicle.color &&
+		!vehicle.vehicleNumber &&
+		!vehicle.capacity &&
+		!vehicle.vehicleType
 	) {
 		return res
 			.status(400)

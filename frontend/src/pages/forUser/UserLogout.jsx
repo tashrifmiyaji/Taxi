@@ -28,7 +28,7 @@ const UserLogout = () => {
 		handleLogout();
 	}, []);
 
-	return null
+	return null;
 };
 
 export default UserLogout;

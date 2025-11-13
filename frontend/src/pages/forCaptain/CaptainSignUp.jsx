@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signupCaptain } from "../../apis/captainApi";
+import { useCaptainContext } from "../../context/CaptainContext";
 
 const CaptainSignup = () => {
+	const navigate = useNavigate();
+	const { captain, setCaptain } = useCaptainContext();
+	const [error, setError] = useState("");
 	const [name, setName] = useState({
 		firstName: "",
 		lastName: "",
@@ -10,18 +15,40 @@ const CaptainSignup = () => {
 	const [password, setPassword] = useState("");
 	const [vehicleInformation, setVehicleInformation] = useState({
 		color: "",
-		number: "",
+		vehicleNumber: "",
 		capacity: "",
-		type: "",
+		vehicleType: "",
 	});
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError("");
+
 		const newCaptain = {
-			name,
+			fullName: name,
 			email,
 			password,
-			vehicleInformation
+			vehicle: vehicleInformation,
+		};
+
+		try {
+			const res = await signupCaptain(newCaptain);
+			if (res.status === 201) {
+				localStorage.setItem("token", res.data.token);
+				setCaptain(res.data);
+				navigate("/captain-home");
+			}
+		} catch (error) {
+			console.log(error);
+			if (
+				error.response &&
+				error.response.data &&
+				error.response.data.error
+			) {
+				setError(error.response.data.error[0].msg);
+			} else {
+				setError("something went wrong!");
+			}
 		}
 	};
 
@@ -111,11 +138,11 @@ const CaptainSignup = () => {
 									className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base"
 									type="text"
 									placeholder="Vehicle Number"
-									value={vehicleInformation.number}
+									value={vehicleInformation.vehicleNumber}
 									onChange={(e) => {
 										setVehicleInformation((prev) => ({
 											...prev,
-											number: e.target.value,
+											vehicleNumber: e.target.value,
 										}));
 									}}
 								/>
@@ -137,11 +164,11 @@ const CaptainSignup = () => {
 								<select
 									className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base"
 									required
-									value={vehicleInformation.type}
+									value={vehicleInformation.vehicleType}
 									onChange={(e) => {
 										setVehicleInformation((prev) => ({
 											...prev,
-											type: e.target.value,
+											vehicleType: e.target.value,
 										}));
 									}}
 								>
@@ -153,6 +180,11 @@ const CaptainSignup = () => {
 								</select>
 							</div>
 
+							{error && (
+								<p className="text-red-500 text-sm mb-3">
+									{error}
+								</p>
+							)}
 							<button
 								type="submit"
 								className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"

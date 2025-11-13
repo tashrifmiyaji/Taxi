@@ -1,18 +1,20 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserDataContext } from "../../context/userContext";
+import { UserDataContext } from "../../context/UserContext";
 import { userRegister } from "../../apis/api";
 
 const UserSignup = () => {
 	const [name, setName] = useState({});
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
 
 	const navigate = useNavigate();
 	const { user, setUser } = useContext(UserDataContext);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError("");
 		const newUser = {
 			fullName: {
 				firstName: name.firstName,
@@ -22,12 +24,24 @@ const UserSignup = () => {
 			password,
 		};
 
-		const res = await userRegister(newUser)
-		if (res.status === 201) {
-			localStorage.setItem("token",res.data.token);
-			localStorage.setItem("role","user");
-			setUser(res.data)
-			navigate("/home")
+		try {
+			const res = await userRegister(newUser);
+			if (res.status === 201) {
+				localStorage.setItem("token", res.data.token);
+				setUser(res.data);
+				navigate("/home");
+			}
+		} catch (error) {
+			console.log(error);
+			if (
+				error.response &&
+				error.response.data &&
+				error.response.data.error
+			) {
+				setError(error.response.data.error[0].msg);
+			} else {
+				setError("something went wrong!");
+			}
 		}
 	};
 	return (
@@ -93,7 +107,11 @@ const UserSignup = () => {
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 							/>
-
+							{error && (
+								<p className="text-red-500 text-sm mb-3">
+									{error}
+								</p>
+							)}
 							<button
 								type="submit"
 								className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"

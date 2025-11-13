@@ -1,14 +1,38 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { useCaptainContext } from "../../context/CaptainContext";
+import { loginCaptain } from "../../apis/captainApi";
 
 const CaptainLogin = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
+	const navigate = useNavigate();
+	const { captain, setCaptain } = useCaptainContext();
 
-	const submitHandler = (e) => {
+	const submitHandler = async (e) => {
 		e.preventDefault();
-		setEmail("");
-		setPassword("");
+		setError("");
+
+		try {
+			const res = await loginCaptain({ email, password });
+			if (res.status === 200) {
+				localStorage.setItem("token", res.data.token);
+				setCaptain(res.data);
+				navigate("/captain-home");
+			}
+		} catch (error) {
+			console.log(error);
+			if (
+				error.response &&
+				error.response.data &&
+				error.response.data.error
+			) {
+				setError(error.response.data.error[0].msg);
+			} else {
+				setError("something went wrong!");
+			}
+		}
 	};
 	return (
 		<div>
@@ -41,6 +65,12 @@ const CaptainLogin = () => {
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 							/>
+
+							{error && (
+								<p className="text-red-500 text-sm mb-3">
+									{error}
+								</p>
+							)}
 
 							<button
 								type="submit"

@@ -6,8 +6,11 @@ import UserSignUp from "./pages/forUser/UserSignUp";
 import UserLogin from "./pages/forUser/UserLogin";
 import UserLogout from "./pages/forUser/UserLogout";
 import UserProtectedRoute from "./routes/UserProtectedRoute";
+import CaptainHome from "./pages/forCaptain/CaptainHome";
 import CaptainSignUp from "./pages/forCaptain/CaptainSignUp";
 import CaptainLogin from "./pages/forCaptain/CaptainLogin";
+import CaptainProtectedRoute from "./routes/CaptainProtectedRoute";
+import Riding from "./pages/forUser/Riding";
 
 function App() {
 	return (
@@ -26,6 +29,14 @@ function App() {
 					<Route path="/user-signup" element={<UserSignUp />} />
 					<Route path="/user-login" element={<UserLogin />} />
 					<Route
+						path="/riding"
+						element={
+							<UserProtectedRoute>
+								<Riding />
+							</UserProtectedRoute>
+						}
+					/>
+					<Route
 						path="/user-logout"
 						element={
 							<UserProtectedRoute>
@@ -33,8 +44,17 @@ function App() {
 							</UserProtectedRoute>
 						}
 					/>
+					{/* ------ */}
 					<Route path="/captain-signup" element={<CaptainSignUp />} />
 					<Route path="/captain-login" element={<CaptainLogin />} />
+					<Route
+						path="/captain-home"
+						element={
+							<CaptainProtectedRoute>
+								<CaptainHome />
+							</CaptainProtectedRoute>
+						}
+					/>
 				</Routes>
 			</div>
 		</>
