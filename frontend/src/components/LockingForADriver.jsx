@@ -6,7 +6,7 @@ const LockingForADriver = (props) => {
 		return (
 			<div>
 				<h5
-					className=" w-full pb-3 pt-2 text-center absolute top-0 left-0 text-2xl bg-gray-200 text-gray-500 rounded-2xl"
+					className=" w-full text-center absolute top-0 left-0 text-2xl border-[1px] bg-gray-200 text-gray-500 rounded-t-2xl"
 					onClick={() => {
 						props.setLockingForADriverPanel(false);
 					}}

@@ -15,36 +15,24 @@ const Home = () => {
 	const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
 
 	// for vehiclePanel
-	let dynamicVehiclePanelClasses;
-	if (vehiclePanelOpen) {
-		dynamicVehiclePanelClasses = "translate-y-[0%]";
-	} else {
-		dynamicVehiclePanelClasses = "translate-y-[100%]";
-	}
+	const dynamicVehiclePanelClasses = vehiclePanelOpen
+		? "translate-y-0"
+		: "translate-y-full";
 
 	// for confirm Ride Panel
-	let dynamicConfirmRidePanelClasses;
-	if (confirmRidePanelOpen) {
-		dynamicConfirmRidePanelClasses = "translate-y-[0%]";
-	} else {
-		dynamicConfirmRidePanelClasses = "translate-y-[100%]";
-	}
+	const dynamicConfirmRidePanelClasses = confirmRidePanelOpen
+		? "translate-y-0"
+		: "translate-y-full";
 
 	// for Locking For A Driver
-	let dynamicLockingForADriver;
-	if (lockingForADriverPanel) {
-		dynamicLockingForADriver = "translate-y-[0%]";
-	} else {
-		dynamicLockingForADriver = "translate-y-[100%]";
-	}
+	const dynamicLockingForADriver = lockingForADriverPanel
+		? "translate-y-0"
+		: "translate-y-full";
 
 	// Waiting For Driver
-	let dynamicWaitingForDriverPanelClass;
-	if (waitingForDriverPanel) {
-		dynamicWaitingForDriverPanelClass = "translate-y-[0%]";
-	} else {
-		dynamicWaitingForDriverPanelClass = "translate-y-[100%]";
-	}
+	const dynamicWaitingForDriverPanelClass = waitingForDriverPanel
+		? "translate-y-0"
+		: "translate-y-full";
 
 	const submitHandler = (e) => {
 		e.preventDefault();
@@ -93,7 +81,7 @@ const Home = () => {
 					</form>
 				</div>
 
-				{/* search panel */}
+				{/*Location search panel */}
 				<div
 					className={`bg-white transition-all duration-500 ease-in-out ${
 						panelOpen ? "h-[60%] px-5" : "h-0"

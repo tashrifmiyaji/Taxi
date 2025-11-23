@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 .logo {
-    font-size: 3rem;
+    font-size: 2rem;
     color: #ff007b;
     font-family: 'Niconne', cursive;
-    font-weight: 700;
-    text-shadow: 5px 5px 0px #ffffff,
-        5px 5px 0px #efa032,
-        10px 10px 0px #46b59b,
-        15px 15px 0px #017e7f,
-        20px 20px 0px #052939,
-        25px 25px 0px black
+    font-weight: 600;
+    text-shadow: 3px 3px 0px #ffffff,
+        3px 3px 0px #efa032,
+        6px 6px 0px #46b59b,
+        9px 9px 0px #017e7f,
+        12px 12px 0px #052939,
+        15px 15px 0px black
 }
 
 .home-page-bg-img {
