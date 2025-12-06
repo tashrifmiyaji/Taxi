@@ -5,8 +5,10 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 // internal inputs
 const connectToDb = require("./db/db");
-const userRoutes = require("./routes/user.route");
-const captainRoutes = require("./routes/captain.route");
+const userRoutes = require("./routes/user.routes");
+const captainRoutes = require("./routes/captain.routes");
+const mapsRoutes = require("./routes/maps.routes");
+const rideRoutes = require("./routes/ride.route");
 
 //
 const app = express();
@@ -28,5 +30,7 @@ app.get("/", (req, res) => {
 // routes
 app.use("/user", userRoutes);
 app.use("/captain", captainRoutes);
+app.use("/maps", mapsRoutes);
+app.use("/ride", rideRoutes);
 
 module.exports = app;
