@@ -47,42 +47,47 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
 	const urlOpenMeteo = `https://geocoding-api.open-meteo.com/v1/search?name=${input}`;
 
 	try {
-		const [photonRes, meteRes] = await Promise.all([
-			axios.get(urlPhoton),
-			axios.get(urlOpenMeteo),
-		]);
+    const [photonRes, meteRes] = await Promise.allSettled([
+        axios.get(urlPhoton),
+        axios.get(urlOpenMeteo),
+    ]);
 
-		const photonData =
-			photonRes.data.features?.map((item) => ({
-				name: item.properties.name,
-				city: item.properties.city,
-				country: item.properties.country,
-				lat: item.geometry.coordinates[1],
-				lon: item.geometry.coordinates[0],
-			})) || [];
+    const photonData =
+        photonRes.status === "fulfilled"
+            ? photonRes.value.data.features?.map((item) => ({
+                  name: item.properties.name,
+                  city: item.properties.city,
+                  country: item.properties.country,
+                  lat: item.geometry.coordinates[1],
+                  lon: item.geometry.coordinates[0],
+              })) || []
+            : [];
 
-		const meteData =
-			meteRes.data.results?.map((item) => ({
-				name: item.name,
-				city: item.admin3 || item.admin2 || item.admin1,
-				country: item.country,
-				lat: item.latitude,
-				lon: item.longitude,
-			})) || [];
+    const meteData =
+        meteRes.status === "fulfilled"
+            ? meteRes.value.data.results?.map((item) => ({
+                  name: item.name,
+                  city: item.admin3 || item.admin2 || item.admin1,
+                  country: item.country,
+                  lat: item.latitude,
+                  lon: item.longitude,
+              })) || []
+            : [];
 
-		// merge + remove duplicates by name+city
-		const all = [...photonData, ...meteData];
+    const all = [...photonData, ...meteData];
 
-		const unique = all.filter(
-			(item, index, self) =>
-				index ===
-				self.findIndex(
-					(x) => x.name === item.name && x.city === item.city
-				)
-		);
-		return unique;
-	} catch (error) {
-		console.log(error);
-		throw Error(error);
-	}
+    const unique = all.filter(
+        (item, index, self) =>
+            index ===
+            self.findIndex(
+                (x) => x.name === item.name && x.city === item.city
+            )
+    );
+
+    return unique;
+} catch (err) {
+    console.log(err);
+    throw Error("API error");
+}
+
 };

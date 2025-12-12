@@ -8,7 +8,7 @@ const connectToDb = require("./db/db");
 const userRoutes = require("./routes/user.routes");
 const captainRoutes = require("./routes/captain.routes");
 const mapsRoutes = require("./routes/maps.routes");
-const rideRoutes = require("./routes/ride.route");
+const rideRoutes = require("./routes/ride.routes");
 
 //
 const app = express();
