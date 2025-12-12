@@ -1,40 +1,30 @@
 import { FaUser } from "react-icons/fa";
 
-const VehicleInfo = [
-	{
-		id: 1,
-		name: "TaxiGo",
-		capacity: 4,
-		timeAway: "2 min away",
-		description: "Affordable, Compact Rides",
-		price: "400৳",
-		imgSrc: "/pngwing.com.png",
-		imgAlt: "car",
-	},
-	{
-		id: 2,
-		name: "BikeRide",
-		capacity: 1,
-		timeAway: "3 min away",
-		description: "Affordable, Bike Rides",
-		price: "150৳",
-		imgSrc: "https://www.freepnglogos.com/uploads/bike-png/black-yamaha-yzf-sport-motorcycle-bike-png-image-pngpix-32.png",
-		imgAlt: "bike",
-	},
-	// new vehicle
-	// {
-	//   id: 3,
-	//   name: "CarRide",
-	//   capacity: 3,
-	//   timeAway: "1 min away",
-	//   description: "Budget friendly rides",
-	//   price: "200৳",
-	//   imgSrc: "/path/to/carRide-image.png",
-	//   imgAlt: "car",
-	// }
-];
-
 const VehiclePanel = (props) => {
+	const VehicleInfo = [
+		{
+			id: 1,
+			name: "TaxiGo",
+			type: "car",
+			capacity: 4,
+			timeAway: "2 min away",
+			description: "Affordable, Compact Rides",
+			price: `${props.fare.car}৳`,
+			imgSrc: "/pngwing.com.png",
+			imgAlt: "car",
+		},
+		{
+			id: 2,
+			name: "BikeRide",
+			type: "bike",
+			capacity: 1,
+			timeAway: "3 min away",
+			description: "Affordable, Bike Rides",
+			price: `${props.fare.bike}৳`,
+			imgSrc: "https://www.freepnglogos.com/uploads/bike-png/black-yamaha-yzf-sport-motorcycle-bike-png-image-pngpix-32.png",
+			imgAlt: "bike",
+		},
+	];
 	return (
 		<>
 			<h5
@@ -54,8 +44,9 @@ const VehiclePanel = (props) => {
 					key={vehicle.id}
 					className="flex items-center justify-between p-3 mb-2 bg-gray-300 active:border-2 rounded-2xl"
 					onClick={() => {
-						props.SetConfirmRidePanelOpen(true);
 						props.setVehiclePanelOpen(false);
+						props.setVehicleType(vehicle.type)
+						props.setConfirmRidePanelOpen(true);
 					}}
 				>
 					<img

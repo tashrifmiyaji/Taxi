@@ -1,14 +1,20 @@
 import { IoLocation } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 
-const LockingForADriver = (props) => {
+const LockingForADriver = ({
+	setLockingForADriverPanel,
+	destination,
+	pickup,
+	fare,
+	vehicleType,
+}) => {
 	try {
 		return (
 			<div>
 				<h5
 					className=" w-full text-center absolute top-0 left-0 text-2xl border-[1px] bg-gray-200 text-gray-500 rounded-t-2xl"
 					onClick={() => {
-						props.setLockingForADriverPanel(false);
+						setLockingForADriverPanel(false);
 					}}
 				>
 					⊻
@@ -22,28 +28,29 @@ const LockingForADriver = (props) => {
 						<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 							<IoLocation />
 							<div>
+								<h5 className="italic underline ">from</h5>
 								<h3 className="font-bold text-2xl">562/11-A</h3>
 								<p className="text-sm text-gray-600 -mt-1">
-									Kankariya Talab, Bhopal
+									{pickup}
 								</p>
 							</div>
 						</div>
 						<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 							<IoLocation />
 							<div>
+								<h5 className=" italic underline">to</h5>
 								<h3 className="font-bold text-2xl">
 									Third Wave Coffee
 								</h3>
 								<p className="text-sm text-gray-600 -mt-1">
-									17th Cross Rd, PWD Quarters, 1st SEctor,{" "}
-									<br /> HSR Layout, Bengaluru, Karnataka
+									{destination}
 								</p>
 							</div>
 						</div>
 						<div className="flex items-center gap-5 pb-2">
 							<FaMoneyCheckAlt />
 							<div>
-								<h3 className="font-bold text-2xl">400৳</h3>
+								<h3 className="font-bold text-2xl">{fare[vehicleType]}৳</h3>
 								<p className="text-sm text-gray-600 -mt-1">
 									Cash Cash
 								</p>

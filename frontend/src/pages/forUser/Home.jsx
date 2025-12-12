@@ -6,13 +6,16 @@ import LockingForADriver from "../../components/LockingForADriver";
 import WaitingForDriver from "../../components/WaitingForDriver";
 
 const Home = () => {
-	const [pickup, setPickup] = useState("");
-	const [destination, setDestination] = useState("");
+	const [pickup, setPickup] = useState(``);
+	const [destination, setDestination] = useState(``);
+	const [activeField, setActiveField] = useState(null); // 'pickup' or 'destination'
 	const [panelOpen, setPanelOpen] = useState(false);
 	const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
-	const [confirmRidePanelOpen, SetConfirmRidePanelOpen] = useState(false);
+	const [confirmRidePanelOpen, setConfirmRidePanelOpen] = useState(false);
 	const [lockingForADriverPanel, setLockingForADriverPanel] = useState(false);
 	const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
+	const [fare, setFare] = useState({});
+	const [vehicleType, setVehicleType] = useState("")
 
 	// for vehiclePanel
 	const dynamicVehiclePanelClasses = vehiclePanelOpen
@@ -67,16 +70,28 @@ const Home = () => {
 							type="text"
 							placeholder="Add a pick-up location"
 							value={pickup}
-							onChange={(e) => setPickup(e.target.value)}
-							onClick={(e) => setPanelOpen(true)}
+						onChange={(e) => {
+							setPickup(e.target.value);
+							setActiveField("pickup");
+						}}
+						onFocus={() => {
+							setActiveField("pickup");
+							setPanelOpen(true);
+						}}
 						/>
 						<input
 							className="bg-[#eeee] w-full px-8 py-2 mt-3 text-lg rounded-lg"
 							type="text"
 							placeholder="Enter your destination"
 							value={destination}
-							onChange={(e) => setDestination(e.target.value)}
-							onClick={(e) => setPanelOpen(true)}
+						onChange={(e) => {
+							setDestination(e.target.value);
+							setActiveField("destination");
+						}}
+						onFocus={() => {
+							setActiveField("destination");
+							setPanelOpen(true);
+						}}
 						/>
 					</form>
 				</div>
@@ -90,6 +105,13 @@ const Home = () => {
 					<LocationSearchPanel
 						setVehiclePanelOpen={setVehiclePanelOpen}
 						setPanelOpen={setPanelOpen}
+						pickup={pickup}
+						destination={destination}
+						setPickup={setPickup}
+						setDestination={setDestination}
+						activeField={activeField}
+						setActiveField={setActiveField}
+						setFare={setFare}
 					/>
 				</div>
 			</div>
@@ -100,7 +122,9 @@ const Home = () => {
 			>
 				<VehiclePanel
 					setVehiclePanelOpen={setVehiclePanelOpen}
-					SetConfirmRidePanelOpen={SetConfirmRidePanelOpen}
+					setConfirmRidePanelOpen={setConfirmRidePanelOpen}
+					fare={fare}
+					setVehicleType={setVehicleType}
 				/>
 			</div>
 
@@ -109,8 +133,12 @@ const Home = () => {
 				className={`fixed w-full z-10 bottom-0 bg-white px-3 py-6 rounded-t-2xl transition-all duration-500 ease-in-out ${dynamicConfirmRidePanelClasses}`}
 			>
 				<ConfirmRide
-					SetConfirmRidePanelOpen={SetConfirmRidePanelOpen}
+					setConfirmRidePanelOpen={setConfirmRidePanelOpen}
 					setLockingForADriverPanel={setLockingForADriverPanel}
+					fare={fare}
+					vehicleType={vehicleType}
+					destination={destination}
+					pickup={pickup}
 				/>
 			</div>
 
@@ -120,6 +148,10 @@ const Home = () => {
 			>
 				<LockingForADriver
 					setLockingForADriverPanel={setLockingForADriverPanel}
+					destination={destination}
+					pickup={pickup}
+					fare={fare}
+					vehicleType={vehicleType}
 				/>
 			</div>
 
