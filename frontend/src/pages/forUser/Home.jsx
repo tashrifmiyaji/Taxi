@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import LocationSearchPanel from "../../components/LocationSearchPanel";
 import VehiclePanel from "../../components/VehiclePanel";
 import ConfirmRide from "../../components/ConfirmRide";
 import LockingForADriver from "../../components/LockingForADriver";
 import WaitingForDriver from "../../components/WaitingForDriver";
+import { SocketContext } from "../../context/SocketContext";
+import { UserDataContext } from "../../context/UserContext";
 
 const Home = () => {
 	const [pickup, setPickup] = useState(``);
@@ -15,7 +17,15 @@ const Home = () => {
 	const [lockingForADriverPanel, setLockingForADriverPanel] = useState(false);
 	const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
 	const [fare, setFare] = useState({});
-	const [vehicleType, setVehicleType] = useState("")
+	const [vehicleType, setVehicleType] = useState("");
+
+	const { sendMessage, receiveMessage } = useContext(SocketContext);
+	const { user } = useContext(UserDataContext);
+	useEffect(() => {
+		if (user?._id) {
+			sendMessage("join", { userType: "user", userId: user._id });
+		}
+	}, [user]);
 
 	// for vehiclePanel
 	const dynamicVehiclePanelClasses = vehiclePanelOpen
@@ -70,28 +80,28 @@ const Home = () => {
 							type="text"
 							placeholder="Add a pick-up location"
 							value={pickup}
-						onChange={(e) => {
-							setPickup(e.target.value);
-							setActiveField("pickup");
-						}}
-						onFocus={() => {
-							setActiveField("pickup");
-							setPanelOpen(true);
-						}}
+							onChange={(e) => {
+								setPickup(e.target.value);
+								setActiveField("pickup");
+							}}
+							onFocus={() => {
+								setActiveField("pickup");
+								setPanelOpen(true);
+							}}
 						/>
 						<input
 							className="bg-[#eeee] w-full px-8 py-2 mt-3 text-lg rounded-lg"
 							type="text"
 							placeholder="Enter your destination"
 							value={destination}
-						onChange={(e) => {
-							setDestination(e.target.value);
-							setActiveField("destination");
-						}}
-						onFocus={() => {
-							setActiveField("destination");
-							setPanelOpen(true);
-						}}
+							onChange={(e) => {
+								setDestination(e.target.value);
+								setActiveField("destination");
+							}}
+							onFocus={() => {
+								setActiveField("destination");
+								setPanelOpen(true);
+							}}
 						/>
 					</form>
 				</div>

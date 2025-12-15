@@ -28,7 +28,7 @@ const UserSignup = () => {
 			const res = await userRegister(newUser);
 			if (res.status === 201) {
 				localStorage.setItem("token", res.data.token);
-				setUser(res.data);
+				setUser(res.data.user);
 				navigate("/home");
 			}
 		} catch (error) {

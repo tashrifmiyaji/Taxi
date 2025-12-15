@@ -35,7 +35,7 @@ const CaptainSignup = () => {
 			const res = await signupCaptain(newCaptain);
 			if (res.status === 201) {
 				localStorage.setItem("token", res.data.token);
-				setCaptain(res.data);
+				setCaptain(res.data.captain);
 				navigate("/captain-home");
 			}
 		} catch (error) {

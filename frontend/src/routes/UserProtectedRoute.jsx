@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
 import { userProfile } from "../apis/api";
+import { UserDataContext } from "../context/UserContext";
 
 const UserProtectedRoute = ({ children }) => {
+	const { setUser } = useContext(UserDataContext);
+
 	const [isChecking, setIsChecking] = useState(true);
 	const navigate = useNavigate();
 	const token = localStorage.getItem("token");
@@ -14,7 +17,8 @@ const UserProtectedRoute = ({ children }) => {
 				return;
 			}
 			try {
-				await userProfile(token);
+				const res = await userProfile(token);
+				setUser(res.data);
 				setIsChecking(false);
 			} catch (error) {
 				console.log("Profile check failed:", error);

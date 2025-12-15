@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { captainProfile } from "../apis/captainApi";
+import { useCaptainContext } from "../context/CaptainContext";
 
 const CaptainProtectedRoute = ({ children }) => {
+	const { setCaptain } = useCaptainContext();
+
 	const navigate = useNavigate();
 	const [isChecking, setIsChecking] = useState(true);
 	const token = localStorage.getItem("token");
@@ -15,7 +18,8 @@ const CaptainProtectedRoute = ({ children }) => {
 			}
 
 			try {
-				await captainProfile(token);
+				const res = await captainProfile(token);
+				setCaptain(res.data)
 				setIsChecking(false);
 			} catch (error) {
 				console.log("Profile check failed:", error);

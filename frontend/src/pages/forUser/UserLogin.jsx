@@ -17,7 +17,7 @@ const UserLogin = () => {
 		try {
 			const res = await userLogin({ email, password });
 			if (res.status === 200) {
-				setUser(res.data);
+				setUser(res.data.user);
 				localStorage.setItem("token", res.data.token);
 				navigate("/home");
 			}
@@ -49,6 +49,7 @@ const UserLogin = () => {
 								type="email"
 								placeholder="email@example.com"
 								required
+								autoComplete="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 							/>
@@ -62,6 +63,7 @@ const UserLogin = () => {
 								type="password"
 								placeholder="password"
 								required
+								autoComplete="current-password"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 							/>

@@ -18,7 +18,7 @@ const CaptainLogin = () => {
 			const res = await loginCaptain({ email, password });
 			if (res.status === 200) {
 				localStorage.setItem("token", res.data.token);
-				setCaptain(res.data);
+				setCaptain(res.data.captain);				
 				navigate("/captain-home");
 			}
 		} catch (error) {
@@ -49,6 +49,7 @@ const CaptainLogin = () => {
 								type="email"
 								placeholder="email@example.com"
 								required
+								autoComplete="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 							/>
@@ -61,6 +62,7 @@ const CaptainLogin = () => {
 								className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
 								type="password"
 								placeholder="password"
+								autoComplete="current-password"
 								required
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}

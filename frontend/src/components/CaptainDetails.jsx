@@ -1,7 +1,10 @@
 import { IoTime, IoSpeedometer } from "react-icons/io5";
 import { FaBookOpen } from "react-icons/fa";
+import { useCaptainContext } from "../context/CaptainContext";
 
-const DriverDetails = () => {
+const CaptainDetails = () => {
+	const { captain } = useCaptainContext();
+	
 	return (
 		<>
 			<div className="flex items-center justify-between pb-4">
@@ -11,7 +14,9 @@ const DriverDetails = () => {
 						src="https://i.pinimg.com/originals/78/d8/89/78d889b7e25894d9397f407cabddb059.jpg"
 						alt=""
 					/>
-					<h4 className="text-lg font-medium">Safwan Muwaj</h4>
+					<h4 className="text-lg font-medium">
+						{captain.fullName.firstName}
+					</h4>
 				</div>
 				<div>
 					<h4 className="text-xl font-semibold">৳1200</h4>
@@ -45,4 +50,4 @@ const DriverDetails = () => {
 	);
 };
 
-export default DriverDetails;
+export default CaptainDetails;
