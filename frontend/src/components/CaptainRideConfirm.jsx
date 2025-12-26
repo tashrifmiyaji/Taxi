@@ -3,17 +3,26 @@ import { useNavigate } from "react-router-dom";
 //
 import { IoLocation } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
+import { getStartedRide } from "../apis/rideApi";
 
-const CaptainRideConfirm = ({ setCaptainRideConfirmPanel }) => {
+const CaptainRideConfirm = ({ setCaptainRideConfirmPanel, newRideData }) => {
 	const [OTP, setOTP] = useState("");
 
 	//
 	const navigate = useNavigate();
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		navigate("/captain-riding");
+		const res = await getStartedRide(newRideData._id, OTP);
+		if (res.status === 200) {
+			setCaptainRideConfirmPanel(false);
+			navigate("/captain-riding", { state: { newRideData } });
+		}
 	};
+
+	const timeInSeconds = newRideData?.duration;
+	const hours = Math.floor(timeInSeconds / 3600);
+	const minutes = Math.floor((timeInSeconds % 3600) / 60);
 
 	return (
 		<div>
@@ -33,37 +42,44 @@ const CaptainRideConfirm = ({ setCaptainRideConfirmPanel }) => {
 						src="https://tse1.mm.bing.net/th/id/OIP._32M20QZ2_4OnsoFzIRfdAHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDethttps://tse1.explicit.bing.net/th/id/OIP.qGBpIq62YcEy5XrrhdyuAwHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3Main&o=7&rm=3"
 						alt=""
 					/>
-					<h2 className="text-xl font-medium">Anika Sultana</h2>
+					<h2 className="text-xl font-medium">{`${newRideData?.user.fullName.firstName} ${newRideData?.user.fullName.lastName}`}</h2>
 				</div>
-				<h5 className="font-semibold">3.2 Km.</h5>
+				<div className="text-right">
+					<h5 className="font-semibold">
+						{(newRideData?.distance / 1000).toFixed(2)} km.
+					</h5>
+					<h5 className="font-semibold">
+						{hours > 0 ? `${hours}h ` : ""}
+						{minutes}m
+					</h5>
+				</div>
 			</div>
 			<div className="flex flex-col justify-between items-center gap-3">
 				<div className="w-full flex flex-col gap-5 py-4">
 					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 						<IoLocation />
 						<div>
-							<h3 className="font-bold text-2xl">562/11-A</h3>
-							<p className="text-sm text-gray-600 -mt-1">
-								Kankariya Talab, Bhopal
-							</p>
+							<p>pickup</p>
+							<h3 className="font-bold text-2xl">
+								{newRideData?.pickup}
+							</h3>
 						</div>
 					</div>
 					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 						<IoLocation />
 						<div>
+							<p>destination</p>
 							<h3 className="font-bold text-2xl">
-								Third Wave Coffee
+								{newRideData?.destination}
 							</h3>
-							<p className="text-sm text-gray-600 -mt-1">
-								17th Cross Rd, PWD Quarters, 1st SEctor, <br />{" "}
-								HSR Layout, Bengaluru, Karnataka
-							</p>
 						</div>
 					</div>
 					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 						<FaMoneyCheckAlt />
 						<div>
-							<h3 className="font-bold text-2xl">400৳</h3>
+							<h3 className="font-bold text-2xl">
+								{newRideData?.fare}৳
+							</h3>
 							<p className="text-sm text-gray-600 -mt-1">
 								Cash Cash
 							</p>

@@ -16,13 +16,14 @@ const WaitingForDriver = (props) => {
 				<div className="flex items-center justify-between mt-14">
 					<img className="h-12" src="/pngwing.com.png" alt="" />
 					<div className="text-right">
-						<h2 className="text-lg font-medium">Sarthak</h2>
+						<h2 className="text-lg font-medium">{`${props.ride?.captain.fullName.firstName} ${props.ride?.captain.fullName.lastName}`}</h2>
 						<h4 className="text-xl font-semibold -mt-1 -mb-1">
-							MB04 AB 123
+							{props.ride?.captain.vehicle.vehicleNumber}
 						</h4>
 						<p className="text-sm text-gray-600">
 							Mercedes-Benz G63 AMG 🚙.
 						</p>
+						<h2>otp {props.ride?.otp}</h2>
 					</div>
 				</div>
 
@@ -31,28 +32,23 @@ const WaitingForDriver = (props) => {
 						<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 							<IoLocation />
 							<div>
-								<h3 className="font-bold text-2xl">562/11-A</h3>
-								<p className="text-sm text-gray-600 -mt-1">
-									Kankariya Talab, Bhopal
-								</p>
+								<p>pickup</p>
+								<h3 className="font-bold text-2xl">{props.ride?.pickup}</h3>
 							</div>
 						</div>
 						<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 							<IoLocation />
 							<div>
+								<p>destination</p>
 								<h3 className="font-bold text-2xl">
-									Third Wave Coffee
+									{props.ride?.destination}
 								</h3>
-								<p className="text-sm text-gray-600 -mt-1">
-									17th Cross Rd, PWD Quarters, 1st SEctor,{" "}
-									<br /> HSR Layout, Bengaluru, Karnataka
-								</p>
 							</div>
 						</div>
 						<div className="flex items-center gap-5 pb-2">
 							<FaMoneyCheckAlt />
 							<div>
-								<h3 className="font-bold text-2xl">400৳</h3>
+								<h3 className="font-bold text-2xl">{props.ride?.fare}৳</h3>
 								<p className="text-sm text-gray-600 -mt-1">
 									Cash Cash
 								</p>

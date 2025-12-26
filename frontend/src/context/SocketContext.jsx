@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
 			socket.off("connect");
 			socket.off("disconnect");
 		};
-	}, []);
+	}, [socket]);
 
 	const sendMessage = (eventName, message) => {
 		socket.emit(eventName, message);

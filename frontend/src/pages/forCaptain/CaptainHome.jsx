@@ -8,6 +8,13 @@ import { useCaptainContext } from "../../context/CaptainContext";
 import { SocketContext } from "../../context/SocketContext";
 
 const CaptainHome = () => {
+	const [captainRidePopupPanel, setCaptainRidePopupPanel] = useState(false);
+	const [captainRideConfirmPanel, setCaptainRideConfirmPanel] =
+		useState(false);
+	const [showLocationPermission, setShowLocationPermission] = useState(true);
+	const [newRideData, setNewRideData] = useState(null);
+
+	//
 	const { captain } = useCaptainContext();
 	const { socket, sendMessage, receiveMessage } = useContext(SocketContext);
 
@@ -21,6 +28,7 @@ const CaptainHome = () => {
 		};
 	}, [captain]);
 
+	// update location
 	const watchIdRef = useRef(null);
 	const intervalRef = useRef(null);
 
@@ -49,30 +57,39 @@ const CaptainHome = () => {
 	};
 
 	const sendLocation = (position) => {
-	socket.emit("update-captain-location", {
-		userId: captain._id,
-		location: {
-			latitude: position.coords.latitude,
-			longitude: position.coords.longitude,
-		},
-	});
-};
+		socket.emit("update-captain-location", {
+			userId: captain._id,
+			location: {
+				latitude: position.coords.latitude,
+				longitude: position.coords.longitude,
+			},
+		});
+	};
 
 	const stopLocationUpdates = () => {
-	if (watchIdRef.current) {
-		navigator.geolocation.clearWatch(watchIdRef.current);
-		watchIdRef.current = null;
-	}
-	if (intervalRef.current) {
-		clearInterval(intervalRef.current);
-		intervalRef.current = null;
-	}
-};
-	const [captainRidePopupPanel, setCaptainRidePopupPanel] = useState(true);
-	const [captainRideConfirmPanel, setCaptainRideConfirmPanel] =
-		useState(false);
+		if (watchIdRef.current) {
+			navigator.geolocation.clearWatch(watchIdRef.current);
+			watchIdRef.current = null;
+		}
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+	};
 
-	const [showLocationPermission, setShowLocationPermission] = useState(true);
+	// achieve new ride popup data
+	useEffect(() => {
+		const handleNewRide = (data) => {
+			setNewRideData(data);
+			setCaptainRidePopupPanel(true);
+		};
+
+		socket.on("new-ride", handleNewRide);
+
+		return () => {
+			socket.off("new-ride", handleNewRide);
+		};
+	}, [socket]);
 
 	const dynamicCaptainRidePopupPanelClass = captainRidePopupPanel
 		? "translate-y-0"
@@ -113,6 +130,7 @@ const CaptainHome = () => {
 				<CaptainRidePopUp
 					setCaptainRidePopupPanel={setCaptainRidePopupPanel}
 					setCaptainRideConfirmPanel={setCaptainRideConfirmPanel}
+					newRideData={newRideData}
 				/>
 			</div>
 
@@ -122,6 +140,7 @@ const CaptainHome = () => {
 			>
 				<CaptainRideConfirm
 					setCaptainRideConfirmPanel={setCaptainRideConfirmPanel}
+					newRideData={newRideData}
 				/>
 			</div>
 		</div>

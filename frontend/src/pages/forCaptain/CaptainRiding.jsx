@@ -1,11 +1,30 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 //
 import { IoLocation } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
+import { rideEnd } from "../../apis/rideApi";
 
 const CaptainRiding = () => {
 	const [finishRidingPanel, setFinishRidingPanel] = useState(false);
 	const [finishedRide, setFinishedRide] = useState(false);
+
+	const navigate = useNavigate();
+	const location = useLocation();
+	const rideData = location.state?.newRideData;
+
+	const timeInSeconds = rideData?.duration;
+	const hours = Math.floor(timeInSeconds / 3600);
+	const minutes = Math.floor((timeInSeconds % 3600) / 60);
+
+	const endRide = async () => {
+		const res = await rideEnd(rideData?._id);
+		console.log(res);
+		
+		if (res.status === 200) {
+			navigate("/captain-home");
+		}
+	};
 
 	let dynamicMapDivHeight;
 	let dynamicFinishRidingDivHeight;
@@ -57,40 +76,45 @@ const CaptainRiding = () => {
 								alt=""
 							/>
 							<h2 className="text-xl font-medium">
-								Anika Sultana
+								{`${rideData?.user.fullName.firstName} ${rideData?.user.fullName.lastName}`}
 							</h2>
 						</div>
-						<h5 className="font-semibold">3.2 Km.</h5>
+						<div className="text-right">
+							<h5 className="font-semibold">
+								{(rideData?.distance / 1000).toFixed(2)} km.
+							</h5>
+							<h5 className="font-semibold">
+								{hours > 0 ? `${hours}h ` : ""}
+								{minutes}m
+							</h5>
+						</div>
 					</div>
 					<div className="flex flex-col justify-between items-center gap-3">
 						<div className="w-full flex flex-col gap-5 py-4">
 							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 								<IoLocation />
 								<div>
+									<p className="italic">pickup</p>
 									<h3 className="font-bold text-2xl">
-										562/11-A
+										{rideData?.pickup}
 									</h3>
-									<p className="text-sm text-gray-600 -mt-1">
-										Kankariya Talab, Bhopal
-									</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 								<IoLocation />
 								<div>
+									<p className="italic"></p>
 									<h3 className="font-bold text-2xl">
-										Third Wave Coffee
+										{rideData.destination}
 									</h3>
-									<p className="text-sm text-gray-600 -mt-1">
-										17th Cross Rd, PWD Quarters, 1st SEctor,
-										<br /> HSR Layout, Bengaluru, Karnataka
-									</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 								<FaMoneyCheckAlt />
 								<div>
-									<h3 className="font-bold text-2xl">400৳</h3>
+									<h3 className="font-bold text-2xl">
+										{rideData?.fare}৳
+									</h3>
 									<p className="text-sm text-gray-600 -mt-1">
 										Cash Cash
 									</p>
@@ -100,7 +124,9 @@ const CaptainRiding = () => {
 					</div>
 				</div>
 				<div className="flex items-center justify-between pt-12 px-5">
-					<h4 className="font-semibold">3.2 Km away</h4>
+					<h4 className="font-semibold">
+						{(rideData?.distance / 1000).toFixed(2)} km.
+					</h4>
 					<button
 						disabled={finishedRide}
 						className={` ${
@@ -111,6 +137,7 @@ const CaptainRiding = () => {
 						onClick={() => {
 							setFinishRidingPanel(true);
 							setFinishedRide(true);
+							endRide();
 						}}
 					>
 						{finishedRide ? "Finished Ride." : "Finish Ride!"}

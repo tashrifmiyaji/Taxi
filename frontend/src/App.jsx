@@ -5,11 +5,11 @@ import Home from "./pages/forUser/Home";
 import UserSignUp from "./pages/forUser/UserSignUp";
 import UserLogin from "./pages/forUser/UserLogin";
 import UserLogout from "./pages/forUser/UserLogout";
-import UserProtectedRoute from "./routes/UserProtectedRoute";
+import UserProtectedRoute from "./protector/UserProtectedRoute";
 import CaptainHome from "./pages/forCaptain/CaptainHome";
 import CaptainSignUp from "./pages/forCaptain/CaptainSignUp";
 import CaptainLogin from "./pages/forCaptain/CaptainLogin";
-import CaptainProtectedRoute from "./routes/CaptainProtectedRoute";
+import CaptainProtectedRoute from "./protector/CaptainProtectedRoute";
 import Riding from "./pages/forUser/Riding";
 import CaptainRiding from "./pages/forCaptain/CaptainRiding";
 import CaptainLogout from "./pages/forCaptain/CaptainLogout";
@@ -57,12 +57,14 @@ function App() {
 							</CaptainProtectedRoute>
 						}
 					/>
-					<Route path="/captain-riding"
-					element={
-						<CaptainProtectedRoute>
-							<CaptainRiding/>
-						</CaptainProtectedRoute>
-					}/>
+					<Route
+						path="/captain-riding"
+						element={
+							<CaptainProtectedRoute>
+								<CaptainRiding />
+							</CaptainProtectedRoute>
+						}
+					/>
 					<Route
 						path="/captain-logout"
 						element={

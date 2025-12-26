@@ -32,17 +32,23 @@ function initializeSocket(server) {
 
 		socket.on("update-captain-location", async (data) => {
 			const { userId, location } = data;
-			console.log(data);
 
-			if (!location || !location.latitude || !location.longitude) {
+			if (
+				!location ||
+				typeof location.latitude !== "number" ||
+				typeof location.longitude !== "number"
+			) {
 				return socket.emit("error", {
 					message: "invalid location data!",
 				});
 			}
+
+			const { latitude, longitude } = location;
+
 			await captainModel.findByIdAndUpdate(userId, {
 				location: {
-					latitude: location.latitude,
-					longitude: location.longitude,
+					type: "Point",
+					coordinates: [longitude, latitude],
 				},
 			});
 		});
@@ -53,9 +59,9 @@ function initializeSocket(server) {
 	});
 }
 
-function sentMessageToSocketId(socketId, message) {
-	if (io) {
-		io.to(socketId).emit("message", message);
+function sentMessageToSocketId(socketId, eventNameAndData) {
+	if (io?.sockets.sockets.get(socketId)) {
+		io.to(socketId).emit(eventNameAndData.eventName, eventNameAndData.data);
 	} else {
 		console.log("Socket.io not initialized!");
 	}

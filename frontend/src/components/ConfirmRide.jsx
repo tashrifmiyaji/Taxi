@@ -12,13 +12,11 @@ const ConfirmRide = ({
 }) => {
 	const crateRideFun = async () => {
 		try {
-			const res = await createRide({pickup, destination, vehicleType});
-			console.log(res)
+			await createRide({ pickup, destination, vehicleType });
 		} catch (error) {
 			console.log(error);
 		}
 	};
-
 	return (
 		<div>
 			<h5
@@ -38,23 +36,17 @@ const ConfirmRide = ({
 					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 						<IoLocation />
 						<div>
-							<h5 className=" italic underline">from</h5>
-							<h3 className="font-bold text-2xl">562/11-A</h3>
-							<p className="text-sm text-gray-600 -mt-1">
-								{pickup}
-							</p>
+							<p className=" italic">pickup</p>
+							<h3 className="font-bold text-2xl">{pickup}</h3>
 						</div>
 					</div>
 					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 						<IoLocation />
 						<div>
-							<h5 className=" italic underline">to</h5>
+							<p className=" italic">destination</p>
 							<h3 className="font-bold text-2xl">
-								Third Wave Coffee
-							</h3>
-							<p className="text-sm text-gray-600 -mt-1">
 								{destination}
-							</p>
+							</h3>
 						</div>
 					</div>
 					<div className="flex items-center gap-5 pb-2">

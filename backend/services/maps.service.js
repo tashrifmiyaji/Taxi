@@ -1,13 +1,23 @@
 const axios = require("axios");
 const captainModel = require("../models/captain.model");
+const apiKey = process.env.GOOGLE_MAP_API_KEY;
 
 module.exports.getAddressCoordinates = async (address) => {
-	const apiKey = process.env.GOOGLE_MAP_API_KEY;
-
-	const url = `https://nominatim.openstreetmap.org/search?format=json&q=${address}`;
-
 	try {
-		const res = await axios.get(url);
+		const res = await axios.get(
+			"https://nominatim.openstreetmap.org/search",
+			{
+				params: {
+					format: "json",
+					q: address,
+				},
+				headers: {
+					"User-Agent":
+						"TaxiApp/1.0 (contact: sadiyaislam1111@gmail.com)",
+					"Accept-Language": "en",
+				},
+			}
+		);
 
 		const location = res.data[0];
 
@@ -88,4 +98,17 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
 		console.log(err);
 		throw Error("API error");
 	}
+};
+
+module.exports.getCaptainInTheRadius = async (latitude, longitude, radius) => {
+	// radius in k.m.
+	const captains = await captainModel.find({
+		location: {
+			$geoWithin: {
+				$centerSphere: [[91.226967, 23.19342], radius / 6371],
+			},
+		},
+	});
+
+	return captains;
 };

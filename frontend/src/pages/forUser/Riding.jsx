@@ -1,8 +1,33 @@
-import { Link } from "react-router-dom";
+import { useEffect, useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoLocation, IoHome } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
+import { SocketContext } from "../../context/SocketContext";
 
 const Riding = () => {
+	const navigate = useNavigate();
+	const location = useLocation()
+	const rideData = location.state?.data;
+	
+	const { socket } = useContext(SocketContext);
+
+	const timeInSeconds = rideData?.duration;
+	const hours = Math.floor(timeInSeconds / 3600);
+	const minutes = Math.floor((timeInSeconds % 3600) / 60);
+
+	useEffect(() => {
+		const handleEndRide = (data) => {
+			console.log("ride end data", data);
+			navigate("/home");
+		};
+
+		socket?.on("ride-ended", handleEndRide);
+
+		return () => {
+			socket?.off("ride-ended", handleEndRide);
+		};
+	}, []);
+
 	return (
 		<div className="h-screen">
 			<Link
@@ -19,13 +44,19 @@ const Riding = () => {
 					<div className="flex items-center justify-between">
 						<img className="h-12" src="/pngwing.com.png" alt="" />
 						<div className="text-right">
-							<h2 className="text-lg font-medium">Sarthak</h2>
+							<h2 className="text-lg font-medium">{`${rideData?.captain.fullName.firstName} ${rideData?.captain.fullName.lastName}`}</h2>
 							<h4 className="text-xl font-semibold -mt-1 -mb-1">
 								MB04 AB 123
 							</h4>
-							<p className="text-sm text-gray-600">
-								Mercedes-Benz G63 AMG 🚙.
-							</p>
+							<div className="text-right">
+								<h5 className="font-semibold">
+									{(rideData?.distance / 1000).toFixed(2)} km.
+								</h5>
+								<h5 className="font-semibold">
+									{hours > 0 ? `${hours}h ` : ""}
+									{minutes}m
+								</h5>
+							</div>
 						</div>
 					</div>
 
@@ -34,30 +65,27 @@ const Riding = () => {
 							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 								<IoLocation />
 								<div>
+									<p className="italic">pickup</p>
 									<h3 className="font-bold text-2xl">
-										562/11-A
+										{rideData?.pickup}
 									</h3>
-									<p className="text-sm text-gray-600 -mt-1">
-										Kankariya Talab, Bhopal
-									</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
 								<IoLocation />
 								<div>
+									<p className="italic">destination</p>
 									<h3 className="font-bold text-2xl">
-										Third Wave Coffee
+										{rideData?.destination}
 									</h3>
-									<p className="text-sm text-gray-600 -mt-1">
-										17th Cross Rd, PWD Quarters, 1st SEctor,{" "}
-										<br /> HSR Layout, Bengaluru, Karnataka
-									</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-5 pb-2">
 								<FaMoneyCheckAlt />
 								<div>
-									<h3 className="font-bold text-2xl">400৳</h3>
+									<h3 className="font-bold text-2xl">
+										{rideData?.fare}৳
+									</h3>
 									<p className="text-sm text-gray-600 -mt-1">
 										Cash Cash
 									</p>

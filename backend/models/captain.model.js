@@ -57,21 +57,28 @@ const captainSchema = new mongoose.Schema({
 			enum: ["car", "bike"],
 		},
 	},
+	// ✅ GeoJSON Location
 	location: {
-		latitude: {
-			type: Number,
+		type: {
+			type: String,
+			enum: ["Point"],
+			default: "Point",
 		},
-		longitude: {
-			type: Number,
+		coordinates: {
+			type: [Number], // [longitude, latitude]
+			required: true,
 		},
 	},
 });
 
+// ✅ 2dsphere index (MUST)
+captainSchema.index({ location: "2dsphere" });
+
+// ---------- methods ----------
 captainSchema.methods.generateCaptainToken = function () {
-	const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+	return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
 		expiresIn: "1d",
 	});
-	return token;
 };
 
 captainSchema.methods.comparePassword = async function (password) {

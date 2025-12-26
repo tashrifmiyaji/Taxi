@@ -66,8 +66,6 @@ const LocationSearchPanel = ({
 			{Array.isArray(suggestions) && suggestions.length > 0 && (
 				<div className="mb-3 bg-white border rounded-md p-2">
 					{suggestions.map((sug, idx) => {
-						console.log(sug);
-						
 						return (
 							<div
 								key={idx}

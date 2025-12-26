@@ -6,6 +6,7 @@ import LockingForADriver from "../../components/LockingForADriver";
 import WaitingForDriver from "../../components/WaitingForDriver";
 import { SocketContext } from "../../context/SocketContext";
 import { UserDataContext } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 	const [pickup, setPickup] = useState(``);
@@ -18,14 +19,43 @@ const Home = () => {
 	const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
 	const [fare, setFare] = useState({});
 	const [vehicleType, setVehicleType] = useState("");
+	const [ride, setRide] = useState(null);
 
-	const { sendMessage, receiveMessage } = useContext(SocketContext);
+	const { sendMessage, receiveMessage, socket } = useContext(SocketContext);
 	const { user } = useContext(UserDataContext);
+	const navigate = useNavigate();
+	//
 	useEffect(() => {
 		if (user?._id) {
 			sendMessage("join", { userType: "user", userId: user._id });
 		}
 	}, [user]);
+
+	// ride confirmed
+	useEffect(() => {
+		socket.on("ride-confirmed", (ride) => {
+			setRide(ride);
+			setLockingForADriverPanel(false);
+			setWaitingForDriverPanel(true);
+		});
+		return () => {
+			socket.off("ride-confirmed");
+		};
+	}, [socket]);
+
+	// ride started
+	useEffect(() => {
+		const handleRideStarted = (data) => {
+			setWaitingForDriverPanel(false);
+			navigate("/riding", { state: { data } });
+		};
+
+		socket.on("ride-started", handleRideStarted);
+
+		return () => {
+			socket.off("ride-started", handleRideStarted);
+		};
+	}, [socket]);
 
 	// for vehiclePanel
 	const dynamicVehiclePanelClasses = vehiclePanelOpen
@@ -171,6 +201,7 @@ const Home = () => {
 			>
 				<WaitingForDriver
 					setWaitingForDriverPanel={setWaitingForDriverPanel}
+					ride={ride}
 				/>
 			</div>
 		</div>
