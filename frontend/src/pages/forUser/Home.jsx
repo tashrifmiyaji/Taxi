@@ -7,6 +7,7 @@ import WaitingForDriver from "../../components/WaitingForDriver";
 import { SocketContext } from "../../context/SocketContext";
 import { UserDataContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import LiveTracking from "../../components/LiveTracking";
 
 const Home = () => {
 	const [pickup, setPickup] = useState(``);
@@ -85,10 +86,11 @@ const Home = () => {
 			<div className="logo absolute">Taxi</div>
 			<div className="h-screen w-screen">
 				{/* img for temporary use */}
-				<img
+				<LiveTracking/>
+				{/* <img
 					className="h-full w-full object-cover"
 					src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfmX.gif"
-				/>
+				/> */}
 			</div>
 			<div className="flex flex-col justify-end absolute top-0 w-full h-screen">
 				<div className="h-[30%] p-5 bg-white relative rounded-t-3xl border-t-2">

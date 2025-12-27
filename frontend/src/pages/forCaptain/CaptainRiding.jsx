@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IoLocation } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { rideEnd } from "../../apis/rideApi";
+import LiveTracking from "../../components/LiveTracking";
 
 const CaptainRiding = () => {
 	const [finishRidingPanel, setFinishRidingPanel] = useState(false);
@@ -49,10 +50,11 @@ const CaptainRiding = () => {
 			<div
 				className={`transition-all duration-500 ease-in-out ${dynamicMapDivHeight}`}
 			>
-				<img
+				{/* <img
 					className="h-full w-full object-cover"
 					src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfmX.gif"
-				/>
+				/> */}
+				<LiveTracking/>
 			</div>
 			<div
 				className={`${dynamicFinishRidingDivHeight} transition-all duration-500 ease-in-out bg-yellow-400 relative rounded-t-2xl`}

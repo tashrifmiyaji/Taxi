@@ -3,12 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoLocation, IoHome } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { SocketContext } from "../../context/SocketContext";
+import LiveTracking from "../../components/LiveTracking";
 
 const Riding = () => {
 	const navigate = useNavigate();
-	const location = useLocation()
+	const location = useLocation();
 	const rideData = location.state?.data;
-	
+
 	const { socket } = useContext(SocketContext);
 
 	const timeInSeconds = rideData?.duration;
@@ -37,7 +38,8 @@ const Riding = () => {
 				<IoHome />
 			</Link>
 			<div className="h-1/2">
-				<img src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfmX.gif" />
+				{/* <img src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfmX.gif" /> */}
+				<LiveTracking />
 			</div>
 			<div className="h-1/2 p-2">
 				<div>
