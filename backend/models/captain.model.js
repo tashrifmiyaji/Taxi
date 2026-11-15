@@ -65,8 +65,9 @@ const captainSchema = new mongoose.Schema({
 			default: "Point",
 		},
 		coordinates: {
-			type: [Number], // [longitude, latitude]
+			type: [Number],
 			required: true,
+			default: [0, 0],
 		},
 	},
 });

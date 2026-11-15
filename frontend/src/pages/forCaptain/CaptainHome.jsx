@@ -16,43 +16,57 @@ const CaptainHome = () => {
 
 	//
 	const { captain } = useCaptainContext();
-	const { socket, sendMessage, receiveMessage } = useContext(SocketContext);
+	const { socket } = useContext(SocketContext);
+	const watchIdRef = useRef(null);
 
 	useEffect(() => {
-		if (captain?._id) {
-			sendMessage("join", { userType: "captain", userId: captain._id });
-		}
-		return () => {
-			// cleanup geolocation watch when component unmounts
-			stopLocationUpdates();
+		if (!captain?._id) return undefined;
+
+		const joinCaptain = () => {
+			socket.emit("join", { userType: "captain", userId: captain._id });
+			if (watchIdRef.current !== null && navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						socket.emit("update-captain-location", {
+							userId: captain._id,
+							location: {
+								latitude: position.coords.latitude,
+								longitude: position.coords.longitude,
+							},
+						});
+					},
+					(error) => console.error("location refresh error", error),
+					{ enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+				);
+			}
 		};
-	}, [captain]);
+
+		socket.on("connect", joinCaptain);
+		if (socket.connected) joinCaptain();
+
+		return () => {
+			socket.off("connect", joinCaptain);
+			if (watchIdRef.current !== null && navigator.geolocation) {
+				navigator.geolocation.clearWatch(watchIdRef.current);
+				watchIdRef.current = null;
+			}
+		};
+	}, [captain?._id, socket]);
 
 	// update location
-	const watchIdRef = useRef(null);
-	const intervalRef = useRef(null);
-
 	const startLocationUpdates = () => {
 		if (!navigator.geolocation || !captain?._id || !socket) return;
 
-		// 1️⃣ watchPosition
-		if (!watchIdRef.current) {
+		if (watchIdRef.current === null) {
 			watchIdRef.current = navigator.geolocation.watchPosition(
 				(pos) => sendLocation(pos),
 				(err) => console.error("watch error", err),
-				{ enableHighAccuracy: true }
+				{
+					enableHighAccuracy: true,
+					maximumAge: 5000,
+					timeout: 15000,
+				}
 			);
-		}
-
-		// 2️⃣ force polling every 8 sec
-		if (!intervalRef.current) {
-			intervalRef.current = setInterval(() => {
-				navigator.geolocation.getCurrentPosition(
-					(pos) => sendLocation(pos),
-					(err) => console.error("poll error", err),
-					{ enableHighAccuracy: true }
-				);
-			}, 60000);
 		}
 	};
 
@@ -64,17 +78,6 @@ const CaptainHome = () => {
 				longitude: position.coords.longitude,
 			},
 		});
-	};
-
-	const stopLocationUpdates = () => {
-		if (watchIdRef.current) {
-			navigator.geolocation.clearWatch(watchIdRef.current);
-			watchIdRef.current = null;
-		}
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
-		}
 	};
 
 	// achieve new ride popup data

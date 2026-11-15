@@ -36,10 +36,14 @@ function initializeSocket(server) {
 			if (
 				!location ||
 				typeof location.latitude !== "number" ||
-				typeof location.longitude !== "number"
+				typeof location.longitude !== "number" ||
+				!Number.isFinite(location.latitude) ||
+				!Number.isFinite(location.longitude) ||
+				Math.abs(location.latitude) > 90 ||
+				Math.abs(location.longitude) > 180
 			) {
 				return socket.emit("error", {
-					message: "invalid location data!",
+					message: "Invalid location data",
 				});
 			}
 
@@ -50,10 +54,16 @@ function initializeSocket(server) {
 					type: "Point",
 					coordinates: [longitude, latitude],
 				},
+				socketId: socket.id,
+				status: "active",
 			});
 		});
 
-		socket.on("disconnect", () => {
+		socket.on("disconnect", async () => {
+			await captainModel.updateOne(
+				{ socketId: socket.id },
+				{ socketId: null, status: "inactive" }
+			);
 			console.log(`Clint disconnected! socketId: ${socket.id}`);
 		});
 	});

@@ -22,15 +22,22 @@ const Home = () => {
 	const [vehicleType, setVehicleType] = useState("");
 	const [ride, setRide] = useState(null);
 
-	const { sendMessage, receiveMessage, socket } = useContext(SocketContext);
+	const { socket } = useContext(SocketContext);
 	const { user } = useContext(UserDataContext);
 	const navigate = useNavigate();
 	//
 	useEffect(() => {
-		if (user?._id) {
-			sendMessage("join", { userType: "user", userId: user._id });
-		}
-	}, [user]);
+		if (!user?._id) return undefined;
+
+		const joinUser = () => {
+			socket.emit("join", { userType: "user", userId: user._id });
+		};
+
+		socket.on("connect", joinUser);
+		if (socket.connected) joinUser();
+
+		return () => socket.off("connect", joinUser);
+	}, [user?._id, socket]);
 
 	// ride confirmed
 	useEffect(() => {
@@ -56,7 +63,7 @@ const Home = () => {
 		return () => {
 			socket.off("ride-started", handleRideStarted);
 		};
-	}, [socket]);
+	}, [socket, navigate]);
 
 	// for vehiclePanel
 	const dynamicVehiclePanelClasses = vehiclePanelOpen

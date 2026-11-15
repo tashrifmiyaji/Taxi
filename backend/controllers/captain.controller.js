@@ -9,20 +9,20 @@ const blackListTokenModel = require("../models/blackListToken.model");
 // register
 module.exports.registerCaptain = async (req, res) => {
 	const errors = validationResult(req);
-	if (!errors.isEmpty) {
+	if (!errors.isEmpty()) {
 		return res.status(400).json({ error: errors.array() });
 	}
 
 	const { fullName, email, password, vehicle } = req.body;
 
 	if (
-		!fullName.firstName &&
-		!email &&
-		!password &&
-		!vehicle.color &&
-		!vehicle.vehicleNumber &&
-		!vehicle.capacity &&
-		!vehicle.vehicleType
+		!fullName?.firstName ||
+		!email ||
+		!password ||
+		!vehicle?.color ||
+		!vehicle?.vehicleNumber ||
+		!vehicle?.capacity ||
+		!vehicle?.vehicleType
 	) {
 		return res
 			.status(400)
@@ -60,13 +60,13 @@ module.exports.registerCaptain = async (req, res) => {
 module.exports.loginCaptain = async (req, res) => {
 	const errors = validationResult(req);
 
-	if (!errors.isEmpty) {
+	if (!errors.isEmpty()) {
 		return res.status(400).json({ error: errors.array() });
 	}
 
 	const { email, password } = req.body;
 
-	if (!email && !password) {
+	if (!email || !password) {
 		return res
 			.status(400)
 			.json({ message: "fill all the required fields!" });

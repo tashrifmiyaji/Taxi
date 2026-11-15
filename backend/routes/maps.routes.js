@@ -13,6 +13,8 @@ router.get(
 
 router.get(
 	"/distance-time",
+	query("origin").isString().trim().notEmpty(),
+	query("destination").isString().trim().notEmpty(),
 	authController.authUser,
 	mapController.distanceAndTime
 );

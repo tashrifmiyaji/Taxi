@@ -20,11 +20,8 @@ export const getSuggestions = (input, token) => {
 export const getFare = (pickup, destination) => {
 	const token = localStorage.getItem("token") || "";
 
-	const pickupName = pickup.split(",")[0];
-	const destinationName = destination.split(",")[0];
-
 	return axios.get(`${baseUrl}/ride/get-fare`, {
-		params: { pickup: pickupName, destination: destinationName },
+		params: { pickup, destination },
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},

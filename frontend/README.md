@@ -62,10 +62,21 @@ The dev server runs with HMR (default port 5173).
 
 ## Configuration
 
-Create a `.env.local` in the `frontend` folder with:
+Copy `.env.example` to `.env.local` in the `frontend` folder and set:
 ```env
-VITE_BASE_URL=http://localhost:5000
+VITE_BASE_URL=http://localhost:3000
+VITE_GOOGLE_MAP_API_KEY=your-google-maps-key
+VITE_DEMO_USER_EMAIL=
+VITE_DEMO_USER_PASSWORD=
+VITE_DEMO_DRIVER_EMAIL=
+VITE_DEMO_DRIVER_PASSWORD=
 ```
+
+The landing page's **Demo rider** and **Demo driver** buttons prefill the
+matching login form from these variables. Create the corresponding accounts
+through sign-up first. Vite variables are included in the public frontend
+bundle, so only use credentials for dedicated demo accounts—never secrets or
+personal accounts.
 
 ## Running
 

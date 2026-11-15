@@ -2,8 +2,8 @@
 
 A ride-hailing application (similar to Uber) with a Node.js/Express backend and a React frontend.
 
-**Base URL:** `http://localhost:5000`  
-**Frontend config:** Set `VITE_BASE_URL=http://localhost:5000` in `frontend/.env`
+**Base URL:** `http://localhost:3000` (the default in `backend/server.js`)
+**Frontend config:** Set `VITE_BASE_URL=http://localhost:3000` in `frontend/.env.local`
 
 ---
 
@@ -561,7 +561,16 @@ Authorization: Bearer JWT_TOKEN (user)
 
 ## Notes
 
-- All endpoints use `/api/v1` prefix (check backend `app.js` for routing)
+- Endpoints are mounted directly at `/user`, `/captain`, `/ride`, and `/maps`
+  (there is no `/api/v1` prefix in the current backend)
 - Ride status flow: `pending` → `accepted` → `ongoing` → `completed` (or `cancel`)
 - Captain status: `active` or `inactive` (default)
 - Vehicle types: `car` or `bike`
+
+## Nearby driver matching
+
+Drivers need to sign in, allow device location, and keep the driver app open to
+receive ride requests. Their live location is stored as GeoJSON coordinates in
+`[longitude, latitude]` order. Ride matching geocodes the pickup and searches
+for active drivers within 2 km of that point. Set `CORS_ORIGINS` in the backend
+environment to a comma-separated list of deployed frontend origins.

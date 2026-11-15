@@ -19,10 +19,19 @@ module.exports.getAddressCoordinates = async (address) => {
 		);
 
 		const location = res.data[0];
+		if (!location) {
+			throw new Error(`No coordinates found for address: ${address}`);
+		}
+
+		const lat = Number(location.lat);
+		const lon = Number(location.lon);
+		if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+			throw new Error("Geocoding provider returned invalid coordinates");
+		}
 
 		return {
-			lon: Number(location.lon),
-			lat: Number(location.lat),
+			lon,
+			lat,
 		};
 	} catch (error) {
 		console.error(error);
@@ -34,12 +43,25 @@ module.exports.getDistanceAndTime = async (originCoords, destinationCoords) => {
 	if (!originCoords || !destinationCoords) {
 		throw new Error("Origin and Destination are required!");
 	}
+	for (const coords of [originCoords, destinationCoords]) {
+		if (
+			!Number.isFinite(coords.lat) ||
+			!Number.isFinite(coords.lon) ||
+			Math.abs(coords.lat) > 90 ||
+			Math.abs(coords.lon) > 180
+		) {
+			throw new Error("Origin and destination coordinates are invalid");
+		}
+	}
 
 	const url = `https://router.project-osrm.org/route/v1/driving/${originCoords.lon},${originCoords.lat};${destinationCoords.lon},${destinationCoords.lat}?overview=false`;
 	try {
 		const res = await axios.get(url);
 
-		const route = res.data.routes[0];
+		const route = res.data.routes?.[0];
+		if (!route) {
+			throw new Error("No driving route found");
+		}
 		return {
 			distance: route.distance, // meters
 			duration: route.duration, // seconds
@@ -99,12 +121,23 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
 	}
 };
 
-module.exports.getCaptainInTheRadius = async (latitude, longitude, radius) => {
-	// radius in k.m.
+module.exports.getCaptainInTheRadius = async (latitude, longitude, radius = 2) => {
+	if (
+		!Number.isFinite(latitude) ||
+		!Number.isFinite(longitude) ||
+		Math.abs(latitude) > 90 ||
+		Math.abs(longitude) > 180 ||
+		!Number.isFinite(radius) ||
+		radius <= 0
+	) {
+		throw new Error("Invalid location or search radius");
+	}
+
 	const captains = await captainModel.find({
+		status: "active",
 		location: {
 			$geoWithin: {
-				$centerSphere: [[91.226967, 23.19342], radius / 6371],
+				$centerSphere: [[longitude, latitude], radius / 6371],
 			},
 		},
 	});

@@ -13,9 +13,19 @@ const rideRoutes = require("./routes/ride.routes");
 //
 const app = express();
 dotenv.config();
+const allowedOrigins = [
+	"http://localhost:5173",
+	"http://127.0.0.1:5173",
+	"https://2r63sz8m-5173.inc1.devtunnels.ms",
+	...(process.env.CORS_ORIGINS || "")
+		.split(",")
+		.map((origin) => origin.trim())
+		.filter(Boolean),
+];
+
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', "https://2pxr28ts-5173.inc1.devtunnels.ms"],
-    credentials: true
+	origin: allowedOrigins,
+	credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

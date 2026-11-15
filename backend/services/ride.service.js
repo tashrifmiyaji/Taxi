@@ -62,10 +62,7 @@ module.exports.createRide = async (user, pickup, destination, vehicleType) => {
 	if (!user || !pickup || !destination || !vehicleType) {
 		throw new Error("All fields are required");
 	}
-	const pickupName = pickup.split(",")[0];
-	const destinationName = destination.split(",")[0];
-
-	const fare = await getFare(pickupName, destinationName);
+	const fare = await getFare(pickup, destination);
 
 	const ride = rideModel.create({
 		user,
