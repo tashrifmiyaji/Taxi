@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { captainProfile } from "../apis/captainApi";
 import { useCaptainContext } from "../context/CaptainContext";
+import LoadingScreen from "../components/LoadingScreen";
 
 const CaptainProtectedRoute = ({ children }) => {
 	const { setCaptain } = useCaptainContext();
@@ -28,9 +29,16 @@ const CaptainProtectedRoute = ({ children }) => {
 		};
 
 		verifyCaptain();
-	}, [navigate, token]);
+	}, [navigate, token, setCaptain]);
 
-	if (isChecking) return <div>Checking authentication...</div>;
+	if (isChecking) {
+		return (
+			<LoadingScreen
+				title="Checking your account"
+				message="Verifying your captain session securely."
+			/>
+		);
+	}
 
 	return <>{children}</>;
 };

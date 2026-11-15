@@ -1,79 +1,97 @@
-import { FaUser } from "react-icons/fa";
+import { FaArrowRight, FaCarSide, FaMotorcycle, FaUser } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
-const VehiclePanel = (props) => {
-	const VehicleInfo = [
-		{
-			id: 1,
-			name: "TaxiGo",
-			type: "car",
-			capacity: 4,
-			timeAway: "2 min away",
-			description: "Affordable, Compact Rides",
-			price: `${props.fare.car}৳`,
-			imgSrc: "/pngwing.com.png",
-			imgAlt: "car",
-		},
-		{
-			id: 2,
-			name: "BikeRide",
-			type: "bike",
-			capacity: 1,
-			timeAway: "3 min away",
-			description: "Affordable, Bike Rides",
-			price: `${props.fare.bike}৳`,
-			imgSrc: "https://www.freepnglogos.com/uploads/bike-png/black-yamaha-yzf-sport-motorcycle-bike-png-image-pngpix-32.png",
-			imgAlt: "bike",
-		},
-	];
-	return (
-		<>
-			<h5
-				className=" w-full text-center absolute top-0 left-0 text-2xl bg-gray-200 text-gray-500 border-[1px] rounded-t-2xl"
-				onClick={() => {
-					props.setVehiclePanelOpen(false);
-				}}
-			>
-				⊻
-			</h5>
-			<h3 className="text-2xl font-semibold mb-6 mt-6">
-				Choose a Vehicle
-			</h3>
+const vehicles = [
+	{
+		type: "car",
+		name: "TaxiGo",
+		description: "Comfortable city rides",
+		capacity: 4,
+		icon: FaCarSide,
+	},
+	{
+		type: "bike",
+		name: "BikeRide",
+		description: "Quick trips through town",
+		capacity: 1,
+		icon: FaMotorcycle,
+	},
+];
 
-			{VehicleInfo.map((vehicle) => (
-				<div
-					key={vehicle.id}
-					className="flex items-center justify-between p-3 mb-2 bg-gray-300 active:border-2 rounded-2xl"
-					onClick={() => {
-						props.setVehiclePanelOpen(false);
-						props.setVehicleType(vehicle.type)
-						props.setConfirmRidePanelOpen(true);
-					}}
+const VehiclePanel = ({
+	setVehiclePanelOpen,
+	setConfirmRidePanelOpen,
+	fare,
+	setVehicleType,
+}) => (
+	<section aria-labelledby="vehicle-panel-title">
+		<div className="mb-5 flex items-start justify-between gap-4">
+			<div>
+				<p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">
+					Choose your ride
+				</p>
+				<h2
+					id="vehicle-panel-title"
+					className="mt-1 text-2xl font-bold tracking-tight text-slate-950"
 				>
-					<img
-						className="h-10"
-						src={vehicle.imgSrc}
-						alt={vehicle.imgAlt}
-					/>
-					<div className="w-1/2 ml-2">
-						<h4 className="flex gap-2 font-medium text-base">
-							{vehicle.name}
-							<span className="flex gap-1">
-								<FaUser />
-								{vehicle.capacity}
+					Available options
+				</h2>
+			</div>
+			<button
+				type="button"
+				aria-label="Close ride options"
+				onClick={() => setVehiclePanelOpen(false)}
+				className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
+			>
+				<IoClose aria-hidden="true" className="text-xl" />
+			</button>
+		</div>
+
+		<div className="space-y-3">
+			{vehicles.map((vehicle) => {
+				const VehicleIcon = vehicle.icon;
+				return (
+					<button
+						key={vehicle.type}
+						type="button"
+						onClick={() => {
+							setVehicleType(vehicle.type);
+							setVehiclePanelOpen(false);
+							setConfirmRidePanelOpen(true);
+						}}
+						className="group flex w-full items-center gap-4 rounded-2xl border border-slate-200 p-4 text-left transition hover:border-emerald-400 hover:bg-emerald-50/60 focus-visible:border-emerald-500"
+					>
+						<span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-800 transition group-hover:bg-emerald-100 group-hover:text-emerald-800">
+							<VehicleIcon aria-hidden="true" />
+						</span>
+						<span className="min-w-0 flex-1">
+							<span className="flex flex-wrap items-center gap-2 font-bold text-slate-900">
+								{vehicle.name}
+								<span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500">
+									<FaUser aria-hidden="true" />
+									{vehicle.capacity}
+								</span>
 							</span>
-						</h4>
-						<h3 className="font-medium text-sm">
-							{vehicle.timeAway}
-						</h3>
-						<p className="font-normal text-xs text-gray-600">
-							{vehicle.description}
-						</p>
-					</div>
-					<h2 className="text-xl font-semibold">{vehicle.price}</h2>
-				</div>
-			))}
-		</>
-	);
-};
+							<span className="mt-1 block text-sm text-slate-500">
+								{vehicle.description}
+							</span>
+						</span>
+						<span className="shrink-0 text-right">
+							<span className="block text-lg font-bold text-slate-950">
+								{fare?.[vehicle.type] ?? "—"}৳
+							</span>
+							<span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
+								Select <FaArrowRight aria-hidden="true" />
+							</span>
+						</span>
+					</button>
+				);
+			})}
+		</div>
+		<p className="mt-4 text-xs leading-5 text-slate-500">
+			Fare is an estimate based on your selected route.
+		</p>
+	</section>
+);
 
 export default VehiclePanel;

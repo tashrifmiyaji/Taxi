@@ -1,106 +1,73 @@
-import { useEffect, useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { IoLocation, IoHome } from "react-icons/io5";
-import { FaMoneyCheckAlt } from "react-icons/fa";
+import { FaCarSide } from "react-icons/fa";
 import { SocketContext } from "../../context/SocketContext";
 import LiveTracking from "../../components/LiveTracking";
+import RideDetailsCard from "../../components/RideDetailsCard";
 
 const Riding = () => {
-	const navigate = useNavigate();
 	const location = useLocation();
-	const rideData = location.state?.data;
-
+	const navigate = useNavigate();
+	const ride = location.state?.data;
+	const captain = ride?.captain;
+	const captainName = [
+		captain?.fullName?.firstName,
+		captain?.fullName?.lastName,
+	]
+		.filter(Boolean)
+		.join(" ");
 	const { socket } = useContext(SocketContext);
 
-	const timeInSeconds = rideData?.duration;
-	const hours = Math.floor(timeInSeconds / 3600);
-	const minutes = Math.floor((timeInSeconds % 3600) / 60);
+	useEffect(() => {
+		if (!ride) navigate("/home", { replace: true });
+	}, [ride, navigate]);
 
 	useEffect(() => {
-		const handleEndRide = (data) => {
-			console.log("ride end data", data);
-			navigate("/home");
-		};
+		const handleEndRide = () => navigate("/home", { replace: true });
+		socket.on("ride-ended", handleEndRide);
+		return () => socket.off("ride-ended", handleEndRide);
+	}, [socket, navigate]);
 
-		socket?.on("ride-ended", handleEndRide);
-
-		return () => {
-			socket?.off("ride-ended", handleEndRide);
-		};
-	}, []);
+	if (!ride) return null;
 
 	return (
-		<div className="h-screen">
-			<Link
-				to={"/home"}
-				className="fixed bg-white w-8 h-8 flex items-center justify-center rounded-2xl right-2 top-2"
-			>
-				<IoHome />
-			</Link>
-			<div className="h-1/2">
-				{/* <img src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfmX.gif" /> */}
+		<main className="relative min-h-[100dvh] bg-slate-100">
+			<div className="fixed inset-0">
 				<LiveTracking />
 			</div>
-			<div className="h-1/2 p-2">
-				<div>
-					<div className="flex items-center justify-between">
-						<img className="h-12" src="/pngwing.com.png" alt="" />
-						<div className="text-right">
-							<h2 className="text-lg font-medium">{`${rideData?.captain.fullName.firstName} ${rideData?.captain.fullName.lastName}`}</h2>
-							<h4 className="text-xl font-semibold -mt-1 -mb-1">
-								MB04 AB 123
-							</h4>
-							<div className="text-right">
-								<h5 className="font-semibold">
-									{(rideData?.distance / 1000).toFixed(2)} km.
-								</h5>
-								<h5 className="font-semibold">
-									{hours > 0 ? `${hours}h ` : ""}
-									{minutes}m
-								</h5>
-							</div>
-						</div>
-					</div>
+			<header className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between p-4 sm:p-6">
+				<Link
+					to="/home"
+					className="app-brand pointer-events-auto rounded-2xl bg-white/95 px-3 py-2 shadow-lg shadow-slate-900/10 backdrop-blur"
+				>
+					<span className="app-brand-mark">
+						<FaCarSide aria-hidden="true" />
+					</span>
+					Taxi
+				</Link>
+				<span className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-bold text-white shadow-lg">
+					Trip in progress
+				</span>
+			</header>
 
-					<div>
-						<div className="w-full flex flex-col gap-5 py-2">
-							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
-								<IoLocation />
-								<div>
-									<p className="italic">pickup</p>
-									<h3 className="font-bold text-2xl">
-										{rideData?.pickup}
-									</h3>
-								</div>
-							</div>
-							<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
-								<IoLocation />
-								<div>
-									<p className="italic">destination</p>
-									<h3 className="font-bold text-2xl">
-										{rideData?.destination}
-									</h3>
-								</div>
-							</div>
-							<div className="flex items-center gap-5 pb-2">
-								<FaMoneyCheckAlt />
-								<div>
-									<h3 className="font-bold text-2xl">
-										{rideData?.fare}৳
-									</h3>
-									<p className="text-sm text-gray-600 -mt-1">
-										Cash Cash
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<button className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg active:border-2">
-					Make a payment.
-				</button>
+			<div className="fixed inset-x-0 bottom-0 z-10 mx-auto max-h-[82dvh] w-full max-w-xl overflow-y-auto px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-5 lg:bottom-auto lg:left-6 lg:right-auto lg:top-24 lg:mx-0 lg:max-h-[calc(100dvh-8rem)] lg:w-[min(30rem,calc(100%-3rem))] lg:px-0">
+				<RideDetailsCard
+					ride={ride}
+					counterpartyLabel="Your captain"
+					counterpartyName={captainName}
+					counterpartyMeta={[
+						captain?.vehicle?.color,
+						captain?.vehicle?.vehicleType,
+						captain?.vehicle?.vehicleNumber,
+					]
+						.filter(Boolean)
+						.join(" · ")}
+				/>
+				<p className="px-3 pt-3 text-center text-xs text-slate-600 lg:text-left">
+					Thanks for riding with Taxi.
+				</p>
 			</div>
-		</div>
+		</main>
 	);
 };
 

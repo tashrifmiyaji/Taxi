@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
 import { userProfile } from "../apis/api";
 import { UserDataContext } from "../context/UserContext";
+import LoadingScreen from "../components/LoadingScreen";
 
 const UserProtectedRoute = ({ children }) => {
 	const { setUser } = useContext(UserDataContext);
@@ -25,9 +26,16 @@ const UserProtectedRoute = ({ children }) => {
 				navigate("/user-login");
 			}
 		})();
-	}, [token, navigate]);
+	}, [token, navigate, setUser]);
 
-	if (isChecking) return <div>Checking authentication...</div>;
+	if (isChecking) {
+		return (
+			<LoadingScreen
+				title="Checking your account"
+				message="Verifying your rider session securely."
+			/>
+		);
+	}
 
 	return <>{children}</>;
 };

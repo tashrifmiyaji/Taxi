@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { userLogout } from "../../apis/api";
+import LoadingScreen from "../../components/LoadingScreen";
 
 const UserLogout = () => {
 	const navigate = useNavigate();
@@ -19,16 +20,21 @@ const UserLogout = () => {
 					localStorage.removeItem("token");
 					navigate("/user-login");
 				}
-			} catch (error) {
+			} catch {
 				localStorage.removeItem("token");
 				navigate("/user-login");
 			}
 		};
 
 		handleLogout();
-	}, []);
+	}, [navigate]);
 
-	return null;
+	return (
+		<LoadingScreen
+			title="Signing you out"
+			message="Securing your rider account."
+		/>
+	);
 };
 
 export default UserLogout;

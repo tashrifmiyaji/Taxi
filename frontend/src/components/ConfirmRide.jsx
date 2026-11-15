@@ -1,80 +1,140 @@
-import { IoLocation } from "react-icons/io5";
-import { FaMoneyCheckAlt } from "react-icons/fa";
+import { useState } from "react";
+import { FaArrowLeft, FaCarSide } from "react-icons/fa";
+import { IoClose, IoLocationOutline } from "react-icons/io5";
 import { createRide } from "../apis/rideApi";
 
 const ConfirmRide = ({
 	setConfirmRidePanelOpen,
 	setLockingForADriverPanel,
+	setVehiclePanelOpen,
 	pickup,
 	destination,
 	fare,
 	vehicleType,
 }) => {
-	const crateRideFun = async () => {
+	const [error, setError] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const submitRide = async () => {
+		setError("");
+		setIsSubmitting(true);
 		try {
 			await createRide({ pickup, destination, vehicleType });
-		} catch (error) {
-			console.log(error);
+			setConfirmRidePanelOpen(false);
+			setLockingForADriverPanel(true);
+		} catch (requestError) {
+			setError(
+				requestError.response?.data?.message ||
+					"Could not request this ride. Please try again."
+			);
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
-	return (
-		<div>
-			<h5
-				className=" w-full text-center absolute top-0 left-0 text-2xl bg-gray-200 border-[1px] text-gray-500 rounded-t-2xl"
-				onClick={() => {
-					setConfirmRidePanelOpen(false);
-				}}
+
+	const addressRow = (label, value, isDestination = false) => (
+		<div className="flex items-start gap-3 py-3">
+			<span
+				className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+					isDestination
+						? "bg-slate-900 text-white"
+						: "bg-emerald-100 text-emerald-700"
+				}`}
 			>
-				⊻
-			</h5>
-			<h3 className="text-2xl font-semibold mt-10 mb-5">
-				Confirm Your Ride.
-			</h3>
-			<div className="flex flex-col justify-between items-center gap-3">
-				<img className="h-20" src="/pngwing.com.png" alt="" />
-				<div className="w-full flex flex-col gap-5 py-5">
-					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
-						<IoLocation />
-						<div>
-							<p className=" italic">pickup</p>
-							<h3 className="font-bold text-2xl">{pickup}</h3>
-						</div>
-					</div>
-					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
-						<IoLocation />
-						<div>
-							<p className=" italic">destination</p>
-							<h3 className="font-bold text-2xl">
-								{destination}
-							</h3>
-						</div>
-					</div>
-					<div className="flex items-center gap-5 pb-2">
-						<FaMoneyCheckAlt />
-						<div>
-							<h3 className="font-bold text-2xl">
-								{fare[vehicleType]}৳
-							</h3>
-							<p className="text-sm text-gray-600 -mt-1">
-								Cash Cash
-							</p>
-						</div>
-					</div>
+				<IoLocationOutline aria-hidden="true" />
+			</span>
+			<div className="min-w-0 flex-1">
+				<p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+					{label}
+				</p>
+				<p className="address-copy mt-1 text-sm font-semibold leading-5 text-slate-900">
+					{value}
+				</p>
+			</div>
+		</div>
+	);
+
+	return (
+		<section aria-labelledby="confirm-ride-title">
+			<div className="mb-5 flex items-start justify-between gap-4">
+				<div>
+					<p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">
+						Almost there
+					</p>
+					<h2
+						id="confirm-ride-title"
+						className="mt-1 text-2xl font-bold tracking-tight text-slate-950"
+					>
+						Review your ride
+					</h2>
 				</div>
 				<button
 					type="button"
-					className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg active:border-2"
+					aria-label="Back to ride options"
 					onClick={() => {
 						setConfirmRidePanelOpen(false);
-						setLockingForADriverPanel(true);
-						//
-						crateRideFun();
+						setVehiclePanelOpen(true);
 					}}
+					className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
 				>
-					Confirm
+					<IoClose aria-hidden="true" className="text-xl" />
 				</button>
 			</div>
-		</div>
+
+			<div className="mb-4 flex items-center gap-4 rounded-2xl bg-slate-50 p-4">
+				<img
+					className="h-14 w-20 shrink-0 object-contain"
+					src="/pngwing.com.png"
+					alt=""
+				/>
+				<div className="min-w-0 flex-1">
+					<p className="font-bold capitalize text-slate-900">
+						{vehicleType} ride
+					</p>
+					<p className="text-sm text-slate-500">Cash payment</p>
+				</div>
+				<p className="text-xl font-bold text-slate-950">
+					{fare?.[vehicleType] ?? "—"}৳
+				</p>
+			</div>
+
+			<div className="divide-y divide-slate-100">
+				{addressRow("Pick-up", pickup)}
+				{addressRow("Destination", destination, true)}
+			</div>
+
+			{error && (
+				<p
+					role="alert"
+					className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+				>
+					{error}
+				</p>
+			)}
+
+			<div className="mt-5 grid grid-cols-[auto_1fr] gap-3">
+				<button
+					type="button"
+					onClick={() => {
+						setConfirmRidePanelOpen(false);
+						setVehiclePanelOpen(true);
+					}}
+					aria-label="Back to vehicle options"
+					className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:bg-slate-50"
+				>
+					<FaArrowLeft aria-hidden="true" />
+				</button>
+				<button
+					type="button"
+					className="btn-primary gap-2 bg-emerald-600 hover:bg-emerald-700"
+					disabled={isSubmitting}
+					onClick={submitRide}
+				>
+					<FaCarSide aria-hidden="true" />
+					{isSubmitting ? "Requesting ride..." : "Confirm ride"}
+				</button>
+			</div>
+		</section>
 	);
 };
 

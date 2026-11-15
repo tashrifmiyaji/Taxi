@@ -1,100 +1,90 @@
-import { IoLocation } from "react-icons/io5";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import {postCaptainConfirmRide} from "../apis/rideApi"
+import { useState } from "react";
+import { FaArrowRight } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
+import { postCaptainConfirmRide } from "../apis/rideApi";
+import RideRequestSummary from "./RideRequestSummary";
 
 const CaptainRidePopUp = ({
 	setCaptainRidePopupPanel,
 	setCaptainRideConfirmPanel,
 	newRideData,
 }) => {
-	const timeInSeconds = newRideData?.duration;
-	const hours = Math.floor(timeInSeconds / 3600);
-	const minutes = Math.floor((timeInSeconds % 3600) / 60);
+	const [error, setError] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const handleCaptainConfirmRide = async () => {
-		const res = await postCaptainConfirmRide(newRideData._id)
-	}
+	const acceptRide = async () => {
+		setError("");
+		setIsSubmitting(true);
+		try {
+			await postCaptainConfirmRide(newRideData._id);
+			setCaptainRidePopupPanel(false);
+			setCaptainRideConfirmPanel(true);
+		} catch (requestError) {
+			setError(
+				requestError.response?.data?.message ||
+					"This ride is no longer available. Please try another."
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
-		<div>
-			<h5
-				className=" w-full text-center absolute top-0 left-0 text-2xl text-gray-500 bg-yellow-200 border-[1px]  rounded-t-2xl"
-				onClick={() => setCaptainRidePopupPanel(false)}
-			>
-				⊻
-			</h5>
-			<h3 className="text-2xl font-semibold mt-10 mb-5">
-				New Ride Available!
-			</h3>
-			<div className="flex items-center justify-between p-3 bg-yellow-300 rounded-2xl">
-				<div className="flex items-center gap-3">
-					<img
-						className="h-20 rounded-full object-cover"
-						src="https://tse1.mm.bing.net/th/id/OIP._32M20QZ2_4OnsoFzIRfdAHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDethttps://tse1.explicit.bing.net/th/id/OIP.qGBpIq62YcEy5XrrhdyuAwHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3Main&o=7&rm=3"
-						alt=""
-					/>
-					<h2 className="text-xl font-medium">{`${newRideData?.user.fullName.firstName} ${newRideData?.user.fullName.lastName}`}</h2>
-				</div>
-				<div className="text-right">
-					<h5 className="font-semibold">
-						{(newRideData?.distance / 1000).toFixed(2)} km.
-					</h5>
-					<h5 className="font-semibold">
-						{hours > 0 ? `${hours}h ` : ""}
-						{minutes}m
-					</h5>
-				</div>
-			</div>
-			<div className="flex flex-col justify-between items-center gap-3">
-				<div className="w-full flex flex-col gap-5 py-5">
-					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
-						<IoLocation />
-						<div>
-							<p>pickup</p>
-							<h3 className="font-bold text-2xl">
-								{newRideData?.pickup}
-							</h3>
-						</div>
-					</div>
-					<div className="flex items-center gap-5 pb-2 border-b-2 border-gray-400">
-						<IoLocation />
-						<div>
-							<p>destination</p>
-							<h3 className="font-bold text-2xl">
-								{newRideData?.destination}
-							</h3>
-						</div>
-					</div>
-					<div className="flex items-center gap-5 pb-2">
-						<FaMoneyCheckAlt />
-						<div>
-							<h3 className="font-bold text-2xl">
-								{newRideData?.fare}৳
-							</h3>
-							<p className="text-sm text-gray-600 -mt-1">
-								Cash Cash
-							</p>
-						</div>
-					</div>
+		<section aria-labelledby="new-ride-title">
+			<div className="mb-5 flex items-start justify-between gap-4">
+				<div>
+					<p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">
+						New request
+					</p>
+					<h2
+						id="new-ride-title"
+						className="mt-1 text-2xl font-bold tracking-tight text-slate-950"
+					>
+						A ride is nearby
+					</h2>
 				</div>
 				<button
-					className="w-full bg-green-600 text-white font-semibold p-2 rounded-lg active:border-2"
-					onClick={() => {
-						setCaptainRidePopupPanel(false);
-						setCaptainRideConfirmPanel(true);
-						handleCaptainConfirmRide()
-					}}
-				>
-					Accept!
-				</button>
-				<button
-					className="w-full bg-red-400 text-white font-semibold p-2 rounded-lg active:border-2"
+					type="button"
+					aria-label="Dismiss ride request"
 					onClick={() => setCaptainRidePopupPanel(false)}
+					className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
 				>
-					Ignore!
+					<IoClose aria-hidden="true" className="text-xl" />
 				</button>
 			</div>
-		</div>
+
+			<RideRequestSummary ride={newRideData} />
+
+			{error && (
+				<p
+					role="alert"
+					className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+				>
+					{error}
+				</p>
+			)}
+
+			<div className="mt-5 grid grid-cols-2 gap-3">
+				<button
+					type="button"
+					onClick={() => setCaptainRidePopupPanel(false)}
+					className="min-h-12 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+				>
+					Not now
+				</button>
+				<button
+					type="button"
+					onClick={acceptRide}
+					disabled={isSubmitting}
+					className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+				>
+					{isSubmitting ? "Accepting..." : "Accept ride"}
+					{!isSubmitting && (
+						<FaArrowRight aria-hidden="true" className="text-sm" />
+					)}
+				</button>
+			</div>
+		</section>
 	);
 };
 

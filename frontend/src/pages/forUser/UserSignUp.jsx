@@ -1,148 +1,154 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
+import AuthLayout from "../../components/AuthLayout";
 import { UserDataContext } from "../../context/UserContext";
 import { userRegister } from "../../apis/api";
 
-const UserSignup = () => {
-	const [name, setName] = useState({});
+const UserSignUp = () => {
+	const [name, setName] = useState({ firstName: "", lastName: "" });
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
-
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const navigate = useNavigate();
-	const { user, setUser } = useContext(UserDataContext);
+	const { setUser } = useContext(UserDataContext);
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 		setError("");
-		const newUser = {
-			fullName: {
-				firstName: name.firstName,
-				lastName: name.lastName,
-			},
-			email,
-			password,
-		};
+		setIsSubmitting(true);
 
 		try {
-			const res = await userRegister(newUser);
-			if (res.status === 201) {
-				localStorage.setItem("token", res.data.token);
-				setUser(res.data.user);
-				navigate("/home");
-			}
-		} catch (error) {
-			console.log(error);
-			if (
-				error.response &&
-				error.response.data &&
-				error.response.data.error
-			) {
-				setError(error.response.data.error[0].msg);
-			} else {
-				setError("something went wrong!");
-			}
+			const response = await userRegister({
+				fullName: name,
+				email,
+				password,
+			});
+			localStorage.setItem("token", response.data.token);
+			setUser(response.data.user);
+			navigate("/home");
+		} catch (requestError) {
+			setError(
+				requestError.response?.data?.error?.[0]?.msg ||
+					requestError.response?.data?.message ||
+					(typeof requestError.response?.data === "string"
+						? requestError.response.data
+						: "") ||
+					"Unable to create your account. Please try again."
+			);
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
+
 	return (
-		<div>
-			<div className="h-screen w-full flex justify-between flex-col">
-				<div className="logo">Taxi</div>
-				<div className="p-7 flex flex-col justify-between flex-1">
-					<div>
-						<form onSubmit={(e) => handleSubmit(e)}>
-							<h3 className="text-lg w-1/2  font-medium mb-2">
-								What's your name
-							</h3>
-							<div className="flex gap-4 mb-7">
-								<input
-									required
-									className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border  text-lg placeholder:text-base"
-									type="text"
-									placeholder="First name"
-									value={name.firstName}
-									onChange={(e) =>
-										setName((prev) => ({
-											...prev,
-											firstName: e.target.value,
-										}))
-									}
-								/>
-								<input
-									required
-									className="bg-[#eeeeee] w-1/2  rounded-lg px-4 py-2 border  text-lg placeholder:text-base"
-									type="text"
-									placeholder="Last name"
-									value={name.lastName}
-									onChange={(e) =>
-										setName((prev) => ({
-											...prev,
-											lastName: e.target.value,
-										}))
-									}
-								/>
-							</div>
-
-							<h3 className="text-lg font-medium mb-2">
-								What's your email
-							</h3>
-							<input
-								required
-								className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
-								type="email"
-								placeholder="email@example.com"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-							/>
-
-							<h3 className="text-lg font-medium mb-2">
-								Enter Password
-							</h3>
-
-							<input
-								className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
-								required
-								type="password"
-								placeholder="password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-							/>
-							{error && (
-								<p className="text-red-500 text-sm mb-3">
-									{error}
-								</p>
-							)}
-							<button
-								type="submit"
-								className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
-							>
-								Create account
-							</button>
-						</form>
-						<p className="text-center">
-							Already have a account?{" "}
-							<Link to="/user-login" className="text-blue-600">
-								Login here
-							</Link>
-						</p>
+		<AuthLayout
+			title="Create your account"
+			description="A few details and you’ll be ready to find a ride."
+			accountType="rider"
+			switchHref="/captain-signup"
+			switchPrompt="Driving with us?"
+			switchLabel="Create a captain account"
+		>
+			<form className="space-y-5" onSubmit={handleSubmit}>
+				<fieldset>
+					<legend className="auth-label">Your name</legend>
+					<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+						<input
+							className="auth-input"
+							type="text"
+							placeholder="First name"
+							autoComplete="given-name"
+							minLength={3}
+							required
+							value={name.firstName}
+							onChange={(event) =>
+								setName((previous) => ({
+									...previous,
+									firstName: event.target.value,
+								}))
+							}
+						/>
+						<input
+							className="auth-input"
+							type="text"
+							placeholder="Last name"
+							autoComplete="family-name"
+							minLength={3}
+							required
+							value={name.lastName}
+							onChange={(event) =>
+								setName((previous) => ({
+									...previous,
+									lastName: event.target.value,
+								}))
+							}
+						/>
 					</div>
-					<div>
-						<p className="text-[10px] leading-tight">
-							This site is protected by reCAPTCHA and the{" "}
-							<span className="underline">
-								Google Privacy Policy
-							</span>{" "}
-							and{" "}
-							<span className="underline">
-								Terms of Service apply
-							</span>
-							.
-						</p>
-					</div>
+				</fieldset>
+
+				<div>
+					<label className="auth-label" htmlFor="signup-email">
+						Email address
+					</label>
+					<input
+						className="auth-input"
+						id="signup-email"
+						type="email"
+						placeholder="you@example.com"
+						autoComplete="email"
+						required
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
+					/>
 				</div>
-			</div>
-		</div>
+
+				<div>
+					<label className="auth-label" htmlFor="signup-password">
+						Create a password
+					</label>
+					<input
+						className="auth-input"
+						id="signup-password"
+						type="password"
+						placeholder="At least 6 characters"
+						autoComplete="new-password"
+						minLength={6}
+						required
+						value={password}
+						onChange={(event) => setPassword(event.target.value)}
+					/>
+				</div>
+
+				{error && (
+					<p
+						role="alert"
+						className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+					>
+						{error}
+					</p>
+				)}
+
+				<button className="btn-primary gap-2" disabled={isSubmitting}>
+					{isSubmitting ? "Creating account..." : "Create account"}
+					{!isSubmitting && (
+						<FaArrowRight aria-hidden="true" className="text-sm" />
+					)}
+				</button>
+			</form>
+
+			<p className="mt-6 text-center text-sm text-slate-500">
+				Already have an account?{" "}
+				<Link
+					to="/user-login"
+					className="font-bold text-emerald-700 hover:text-emerald-800"
+				>
+					Sign in
+				</Link>
+			</p>
+		</AuthLayout>
 	);
 };
 
-export default UserSignup;
+export default UserSignUp;

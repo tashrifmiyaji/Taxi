@@ -72,7 +72,7 @@ VITE_DEMO_DRIVER_EMAIL=
 VITE_DEMO_DRIVER_PASSWORD=
 ```
 
-The landing page's **Demo rider** and **Demo driver** buttons prefill the
+The landing page's **Demo rider** and **Demo Captain** buttons prefill the
 matching login form from these variables. Create the corresponding accounts
 through sign-up first. Vite variables are included in the public frontend
 bundle, so only use credentials for dedicated demo accounts—never secrets or

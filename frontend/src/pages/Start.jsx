@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Start = () => {
 	return (
-		<main className="home-page-bg-img relative flex min-h-screen items-end overflow-hidden bg-slate-950 px-5 py-8 sm:px-10 lg:items-center lg:px-16">
+		<main className="home-page-bg-img relative flex min-h-[100dvh] items-end overflow-hidden bg-slate-950 px-5 py-8 sm:px-10 lg:items-center lg:px-16">
 			<div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/10" />
 			<div className="relative z-10 mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
 				<section className="max-w-2xl text-white">
@@ -62,7 +62,7 @@ const Start = () => {
 							to="/captain-login?demo=1"
 							className="rounded-xl border border-slate-200 px-4 py-3 text-center font-semibold text-slate-800 transition hover:border-emerald-600 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
 						>
-							Demo driver
+							Demo Captain
 						</Link>
 					</div>
 
@@ -72,7 +72,7 @@ const Start = () => {
 							to="/captain-login"
 							className="font-semibold text-emerald-700 hover:text-emerald-800"
 						>
-							Sign in as a driver
+							Sign in as a captain
 						</Link>
 					</p>
 				</section>

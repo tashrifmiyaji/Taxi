@@ -1,44 +1,55 @@
-import React from "react";
+import { FaLocationArrow } from "react-icons/fa";
 
 const LocationPermissionPopup = ({ visible = true, onAllow, onClose }) => {
-  if (!visible) return null;
+	if (!visible) return null;
 
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.45)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 60,
-      }}
-    >
-      <div className="bg-white rounded-lg p-6 w-11/12 max-w-md shadow-lg">
-        <h3 className="text-xl font-semibold mb-2">Allow location access</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Please allow access to your device location so we can update your
-          position in real time and show nearby rides.
-        </p>
+	return (
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"
+			role="presentation"
+		>
+			<section
+				className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-8"
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="location-permission-title"
+			>
+				<span className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-xl text-emerald-800">
+					<FaLocationArrow aria-hidden="true" />
+				</span>
+				<p className="text-sm font-bold uppercase tracking-[0.16em] text-emerald-700">
+					Stay connected
+				</p>
+				<h2
+					id="location-permission-title"
+					className="mt-2 text-2xl font-bold tracking-tight text-slate-950"
+				>
+					Share your location
+				</h2>
+				<p className="mt-3 leading-6 text-slate-600">
+					Allow location access so nearby riders can find you and send
+					you trip requests.
+				</p>
 
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-          >
-            Maybe later
-          </button>
-          <button
-            onClick={onAllow}
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Allow
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+				<div className="mt-7 grid grid-cols-2 gap-3">
+					<button
+						type="button"
+						onClick={onClose}
+						className="min-h-12 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+					>
+						Not now
+					</button>
+					<button
+						type="button"
+						onClick={onAllow}
+						className="min-h-12 rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white transition hover:bg-emerald-700"
+					>
+						Enable location
+					</button>
+				</div>
+			</section>
+		</div>
+	);
 };
 
 export default LocationPermissionPopup;

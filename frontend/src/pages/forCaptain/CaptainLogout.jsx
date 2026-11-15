@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { captainLogout } from "../../apis/captainApi";
+import LoadingScreen from "../../components/LoadingScreen";
 
 const CaptainLogout = () => {
     const navigate = useNavigate();
@@ -19,16 +20,21 @@ const CaptainLogout = () => {
                     localStorage.removeItem("token");
                     navigate("/captain-login");
                 }
-            } catch (error) {
+            } catch {
                 localStorage.removeItem("token");
                 navigate("/captain-login");
             }
         };
 
         handleLogout();
-    }, []);
+    }, [navigate]);
 
-    return null;
+    return (
+        <LoadingScreen
+            title="Signing you out"
+            message="Securing your captain account."
+        />
+    );
 };
 
 export default CaptainLogout;
