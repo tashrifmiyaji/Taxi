@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const userModel = require("../models/user.model");
 const userService = require("../services/user.service");
 const blackListTokenModel = require("../models/blackListToken.model");
+const { setAuthCookie, clearAuthCookie } = require("../config/authCookies");
 
 // user registration
 module.exports.registerUser = async (req, res) => {
@@ -35,7 +36,7 @@ module.exports.registerUser = async (req, res) => {
 		delete userObj.password;
 
 		const token = await user.generateAuthToken();
-		res.cookie("token", token);
+		setAuthCookie(res, "token", token);
 
 		res.status(201).json({ user: userObj, token });
 	} catch (err) {
@@ -69,7 +70,7 @@ module.exports.loginUser = async (req, res) => {
 
 	const token = user.generateAuthToken();
 
-	res.cookie("token", token);
+	setAuthCookie(res, "token", token);
 	const userObj = user.toObject();
 	delete userObj.password;
 
@@ -81,9 +82,7 @@ module.exports.userProfile = async (req, res) => {
 };
 
 module.exports.logoutUser = async (req, res) => {
-	const token =
-		req.cookies?.token || req.headers.authorization?.split(" ")[1];
-	await blackListTokenModel.create({ token });
-	res.clearCookie("token");
+	await blackListTokenModel.create({ token: req.token });
+	clearAuthCookie(res, "token");
 	res.status(200).json({ message: "User Logout" });
 };

@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const baseUrl = import.meta.env.VITE_BASE_URL;
+import apiClient from "./apiClient";
 
 /**
  * Get fare for pickup and destination. Accepts either display strings or suggestion objects.
@@ -9,7 +7,7 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
  * @param {string} [token] - optional auth token; falls back to localStorage
  */
 export const getSuggestions = (input, token) => {
-	return axios.get(`${baseUrl}/maps/suggestions`, {
+	return apiClient.get("/maps/suggestions", {
 		params: { input },
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -20,7 +18,7 @@ export const getSuggestions = (input, token) => {
 export const getFare = (pickup, destination) => {
 	const token = localStorage.getItem("token") || "";
 
-	return axios.get(`${baseUrl}/ride/get-fare`, {
+	return apiClient.get("/ride/get-fare", {
 		params: { pickup, destination },
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -30,7 +28,7 @@ export const getFare = (pickup, destination) => {
 
 export const createRide = (rideInfo) => {
 	const token = localStorage.getItem("token") || "";
-	return axios.post(`${baseUrl}/ride/create`, rideInfo, {
+	return apiClient.post("/ride/create", rideInfo, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
@@ -39,8 +37,8 @@ export const createRide = (rideInfo) => {
 
 export const postCaptainConfirmRide = (rideId) => {
 	const token = localStorage.getItem("token") || "";
-	return axios.post(
-		`${baseUrl}/ride/confirm`,
+	return apiClient.post(
+		"/ride/confirm",
 		{ rideId },
 		{
 			headers: {
@@ -52,7 +50,7 @@ export const postCaptainConfirmRide = (rideId) => {
 
 export const getStartedRide = (rideId, otp) => {
 	const token = localStorage.getItem("token") || "";
-	return axios.get(`${baseUrl}/ride/ride-started`, {
+	return apiClient.get("/ride/ride-started", {
 		params: { rideId, otp },
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -62,8 +60,8 @@ export const getStartedRide = (rideId, otp) => {
 
 export const rideEnd = (rideId) => {
 	const token = localStorage.getItem("token");
-	return axios.post(
-		`${baseUrl}/ride/ride-end`,
+	return apiClient.post(
+		"/ride/ride-end",
 		{ rideId },
 		{ headers: { authorization: `Bearer ${token}` } }
 	);

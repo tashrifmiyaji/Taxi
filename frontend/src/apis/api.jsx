@@ -1,21 +1,18 @@
-import axios from "axios";
-
-// base url
-const baseUrl = import.meta.env.VITE_BASE_URL;
+import apiClient from "./apiClient";
 
 // user register
 export const userRegister = (newUser) => {
-	return axios.post(`${baseUrl}/user/register`, newUser);
+	return apiClient.post("/user/register", newUser);
 };
 
 // user login
 export const userLogin = (loginUserData) => {
-	return axios.post(`${baseUrl}/user/login`, loginUserData);
+	return apiClient.post("/user/login", loginUserData);
 };
 
 // user logout
 export const userLogout = (token) => {
-	return axios.get(`${baseUrl}/user/logout`, {
+	return apiClient.get("/user/logout", {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
@@ -24,7 +21,7 @@ export const userLogout = (token) => {
 
 // user profile
 export const userProfile = async (token) => {
-	return axios.get(`${baseUrl}/user/profile`, {
+	return apiClient.get("/user/profile", {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},

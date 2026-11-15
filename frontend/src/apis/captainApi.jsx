@@ -1,20 +1,17 @@
-import axios from "axios";
-
-// base url
-const baseUrl = import.meta.env.VITE_BASE_URL;
+import apiClient from "./apiClient";
 
 // sighup captain
 export const signupCaptain = (newCaptain) => {
-	return axios.post(`${baseUrl}/captain/register`, newCaptain);
+	return apiClient.post("/captain/register", newCaptain);
 };
 // login captain
 export const loginCaptain = (loginUserData) => {
-	return axios.post(`${baseUrl}/captain/login`, loginUserData);
+	return apiClient.post("/captain/login", loginUserData);
 };
 
 // captainProfile
 export const captainProfile = (token) => {
-	return axios.get(`${baseUrl}/captain/profile`, {
+	return apiClient.get("/captain/profile", {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
@@ -23,7 +20,7 @@ export const captainProfile = (token) => {
 
 // captain logout
 export const captainLogout = (token) => {
-	return axios.get(`${baseUrl}/captain/logout`, {
+	return apiClient.get("/captain/logout", {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},

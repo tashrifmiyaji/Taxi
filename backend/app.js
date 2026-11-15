@@ -1,6 +1,8 @@
 // external inputs
 const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config();
+
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 // internal inputs
@@ -9,24 +11,17 @@ const userRoutes = require("./routes/user.routes");
 const captainRoutes = require("./routes/captain.routes");
 const mapsRoutes = require("./routes/maps.routes");
 const rideRoutes = require("./routes/ride.routes");
+const { isAllowedOrigin } = require("./config/cors");
 
 //
 const app = express();
-dotenv.config();
-const allowedOrigins = [
-	"http://localhost:5173",
-	"http://127.0.0.1:5173",
-	"https://2r63sz8m-5173.inc1.devtunnels.ms",
-	...(process.env.CORS_ORIGINS || "")
-		.split(",")
-		.map((origin) => origin.trim())
-		.filter(Boolean),
-];
 
-app.use(cors({
-	origin: allowedOrigins,
-	credentials: true,
-}));
+app.use(
+	cors({
+		origin: isAllowedOrigin,
+		credentials: true,
+	})
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

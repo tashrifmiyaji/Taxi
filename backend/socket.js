@@ -1,14 +1,16 @@
 const socketIo = require("socket.io");
 const userModel = require("./models/user.model");
 const captainModel = require("./models/captain.model");
+const { allowedOrigins } = require("./config/cors");
 
 let io;
 
 function initializeSocket(server) {
 	io = socketIo(server, {
 		cors: {
-			origin: "*",
-			method: ["GET", "POST"],
+			origin: allowedOrigins,
+			methods: ["GET", "POST"],
+			credentials: true,
 		},
 	});
 

@@ -556,8 +556,16 @@ Authorization: Bearer JWT_TOKEN (user)
 - **Token Format:** JWT
 - **Storage:** Frontend should store in `localStorage` under key `token`
 - **Header Format:** `Authorization: Bearer <JWT_TOKEN>`
-- **Token Expiry:** Captains' tokens expire in 1 day; users' tokens don't expire by default
+- **Token Expiry:** User and captain tokens expire after 1 day
+- **Cookies:** Login and registration also set `HttpOnly` authentication cookies. Production cookies use `SameSite=None; Secure`; cross-origin requests must include credentials. Bearer-token authentication remains available as a fallback.
 - **Logout:** Token is blacklisted on the backend; frontend should also remove from `localStorage`
+
+## Backend deployment
+
+Set `FRONTEND_URL` to the exact deployed frontend origin (for example,
+`https://taxigo1.netlify.app`) and `NODE_ENV=production` in the backend host's
+environment. Add any additional allowed frontend origins as a comma-separated
+`CORS_ORIGINS` value. Local development uses `NODE_ENV=development`.
 
 ## Notes
 
@@ -572,5 +580,5 @@ Authorization: Bearer JWT_TOKEN (user)
 Drivers need to sign in, allow device location, and keep the driver app open to
 receive ride requests. Their live location is stored as GeoJSON coordinates in
 `[longitude, latitude]` order. Ride matching geocodes the pickup and searches
-for active drivers within 2 km of that point. Set `CORS_ORIGINS` in the backend
-environment to a comma-separated list of deployed frontend origins.
+for active drivers within 2 km of that point. Set `FRONTEND_URL` or
+`CORS_ORIGINS` in the backend environment to allow the deployed frontend.
